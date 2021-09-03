@@ -19,6 +19,7 @@ class CreateGroupsTable extends Migration
             $table->string('title');
             $table->string('image');
             $table->integer('progress');
+            $table->string('status');
             $table->timestamps();
         });
     }
