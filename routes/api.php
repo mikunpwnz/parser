@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::resource('book', \App\Http\Controllers\BookController::class);
 Route::resource('application', \App\Http\Controllers\ApplicationController::class);
+Route::get('application/free', [\App\Http\Controllers\ApplicationController::class, 'indexFreeApplication']);
 
 Route::resource('group', \App\Http\Controllers\GroupController::class);
 Route::get('socket', [\App\Http\Controllers\GroupController::class, 'socket']);
