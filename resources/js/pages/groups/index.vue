@@ -218,7 +218,7 @@ export default {
                 let groupId = this.groups.find(group => group.id === searchTerm)
             });
 
-        axios.get("api/application")
+        axios.get("api/application/free")
             .then(({data}) => {
                 this.applications = data
             });
