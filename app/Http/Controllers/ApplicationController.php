@@ -19,6 +19,12 @@ class ApplicationController extends Controller
      */
     public function index()
     {
+        $application = Application::all();
+        return response()->json($application);
+    }
+
+    public function indexFreeApplication()
+    {
         $application = Application::where('worked', 0)->get();
         return response()->json($application);
     }
