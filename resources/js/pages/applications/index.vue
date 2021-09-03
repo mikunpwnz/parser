@@ -104,6 +104,7 @@
                             <v-btn
                                 color="primary"
                                 dark
+                                :href="application.browser_url"
                             >
                                 +
                             </v-btn>
