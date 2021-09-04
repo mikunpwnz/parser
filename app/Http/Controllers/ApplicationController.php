@@ -108,4 +108,10 @@ class ApplicationController extends Controller
     {
         //
     }
+
+    public function getCode($id)
+    {
+        $application = Application::find($id);
+        dd($application);
+    }
 }
