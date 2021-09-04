@@ -93,7 +93,10 @@ class GirlController extends Controller
 
     public function getGirlNormal()
     {
-        $girls = Girl::where('need_to_write', 1)->with('groups')->paginate(30);
+        $girls = Girl::where('need_to_write', 1)
+            ->orderBy('last_seen', 'desc')
+            ->with('groups')
+            ->paginate(30);
         return response()->json($girls);
     }
 
