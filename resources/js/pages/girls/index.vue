@@ -107,7 +107,7 @@
 export default {
     data: () => ({
         girls: {},
-        length: '',
+        length: 0,
         page: 1,
         groupId: '',
     }),
