@@ -25,6 +25,7 @@ class CreateApplicationsTable extends Migration
             $table->string('user_last_name')->nullable();
             $table->integer('count')->default(0);
             $table->boolean('worked')->default(0);
+            $table->boolean('need_token')->default(0);
             $table->timestamps();
         });
     }
