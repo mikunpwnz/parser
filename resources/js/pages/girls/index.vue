@@ -115,25 +115,7 @@ export default {
         getGirlFromGroup(id, page = 1) {
             console.log(id)
             console.log(page)
-            axios.get('/api/girl/group/' + id + '?page=' + page)
-                .then(({data}) => {
-                    this.girls = data.data
-                    this.length = data.last_page
-                    console.log(data)
-                    for (let i = 0; i < Object.keys(this.girls).length; ++i) {
-                        let date = new Date(this.girls[i].last_seen * 1000);
-                        let year = new Intl.DateTimeFormat('en', {year: 'numeric'}).format(date);
-                        let month = new Intl.DateTimeFormat('en', {month: '2-digit'}).format(date);
-                        let day = new Intl.DateTimeFormat('en', {day: '2-digit'}).format(date);
 
-                        let hour = new Intl.DateTimeFormat('en', {day: '2-digit'}).format(date);
-                        let minute = new Intl.DateTimeFormat('en', {day: '2-digit'}).format(date);
-                        this.girls[i].last_seen = hour + ':' + minute + ' ' + day + '/' + month + '/' + year;
-                    }
-
-                })
-                .catch(() => {
-                });
         },
         styleObject(girl) {
             if (girl.wrote === 1) {
