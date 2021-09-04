@@ -104,7 +104,7 @@
                             <v-btn
                                 color="primary"
                                 dark
-                                :href="application.browser_url"
+                                :href="'get-code/'+application.id"
                             >
                                 +
                             </v-btn>

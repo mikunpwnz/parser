@@ -23,9 +23,9 @@
                 class="mt-2"
                 v-for="girl in girls"
                 :key="girl.id"
-                :lg="3"
+                :lg="4"
                 :md="6"
-                :sm="6"
+                :sm="12"
                 :xs="12"
             >
 
@@ -35,9 +35,9 @@
                             contain
                             :src="girl.photo"
                             class="white--text align-end"
-                            height="300px"
+                            height="200px"
                         >
-                            <v-card-text>{{ girl.first_name }} {{ girl.last_name }}</v-card-text>
+                            <v-card-text class="bg-dark p-0 pl-5">{{ girl.first_name }} {{ girl.last_name }} | {{ girl.bdate }}</v-card-text>
                             <v-expand-transition>
                                 <div
                                     v-if="hover"
@@ -66,8 +66,7 @@
                             </v-icon>
                         </v-btn>
 
-                        <v-card-text>{{ girl.last_seen }}</v-card-text>
-                        <v-card-text>{{ girl.bdate }}</v-card-text>
+                        <v-card-text class="p-0 pr-1">{{ girl.last_seen }}</v-card-text>
                         <v-spacer></v-spacer>
                         <v-btn
                             x-large
