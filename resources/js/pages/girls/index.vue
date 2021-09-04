@@ -96,7 +96,7 @@
             v-model="page"
             :length="length"
             circle
-            @input="getGirlFromGroup(page)"
+            @input="getGirlFromGroup(groupId,page)"
         >
 
         </v-pagination>
@@ -108,7 +108,7 @@ export default {
     data: () => ({
         girls: {},
         length: '',
-        page: '',
+        page: 1,
         groupId: '',
     }),
     methods: {

@@ -108,7 +108,7 @@ export default {
     data: () => ({
         girls: {},
         length: 0,
-        page: 0,
+        page: 1,
         groupId: '',
     }),
     methods: {
