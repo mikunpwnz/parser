@@ -113,6 +113,8 @@ export default {
     }),
     methods: {
         getGirlFromGroup(id, page = 1) {
+            console.log(id)
+            console.log(page)
             axios.get('/api/girl/group/' + id + '?page=' + page)
                 .then(({data}) => {
                     this.girls = data.data
