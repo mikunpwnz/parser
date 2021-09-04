@@ -14,7 +14,7 @@
             v-model="page"
             :length="length"
             circle
-            @input="getGirlFromGroup(page)"
+            @input="getGirlFromGroup(groupId,page)"
         >
 
         </v-pagination>
