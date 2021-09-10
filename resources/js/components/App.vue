@@ -36,7 +36,7 @@
                             <v-list-item-title>Музыка</v-list-item-title>
                         </v-list-item-content>
                     </template>
-                    <router-link to="/girl">
+                    <router-link to="/notes">
                         <v-list-item
                             link>
                             <v-list-item-action>

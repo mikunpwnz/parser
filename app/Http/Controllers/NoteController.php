@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
@@ -13,7 +14,8 @@ class NoteController extends Controller
      */
     public function index()
     {
-        //
+        $notes = Note::all();
+        return response()->json($notes);
     }
 
     /**
@@ -34,7 +36,9 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $id = $request->input('girls_id');
+        $girls_id = str_replace('https://vk.com/id', '', explode("\r\n",$id));
+        return response()->json($girls_id);
     }
 
     /**
