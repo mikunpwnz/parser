@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Girl;
 use App\Models\Group;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class GirlController extends Controller
@@ -88,6 +89,7 @@ class GirlController extends Controller
     {
         $group = Group::with('girls')->find($id);
         $girls = $group->girls()->with('groups')->paginate(30);
+        $this->setDateFromTimestamp($girls);
         return response()->json($girls);
     }
 
@@ -97,6 +99,7 @@ class GirlController extends Controller
             ->orderBy('last_seen', 'desc')
             ->with('groups')
             ->paginate(30);
+        $this->setDateFromTimestamp($girls);
         return response()->json($girls);
     }
 
@@ -114,5 +117,14 @@ class GirlController extends Controller
         $girl->wrote = 1;
         $girl->need_to_write = 0;
         $girl->save();
+    }
+
+    private function setDateFromTimestamp($girls)
+    {
+        foreach ($girls as &$girl) {
+            $girl->last_seen = Carbon::createFromTimestamp($girl->last_seen)
+                ->format('H:i d/m/Y');
+        }
+        return $girls;
     }
 }
