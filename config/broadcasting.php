@@ -41,10 +41,6 @@ return [
                 'host' => '46.175.146.87',
                 'port' => 6003,
                 'scheme' => 'http',
-                'curl_options' => [
-                    CURLOPT_SSL_VERIFYHOST => 0,
-                    CURLOPT_SSL_VERIFYPEER => 0,
-                ]
             ],
         ],
 
