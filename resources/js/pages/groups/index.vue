@@ -39,7 +39,7 @@
                                     md="12"
                                 >
                                     <v-text-field
-                                        @input="checkAviableGroup"
+                                        @change="checkAviableGroup"
                                         :error-messages="error"
                                         label="Введите ссылку на группу"
                                         required
