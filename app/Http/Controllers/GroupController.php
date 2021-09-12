@@ -47,7 +47,7 @@ class GroupController extends Controller
     {
         $data = $request->validated();
 
-        $remove_char = ["https://", "http://", "/", 'vk.com', 'public'];
+        $remove_char = ["https://", "http://", "/", 'vk.com', 'public', 'club'];
         $groupName = str_replace($remove_char, "", $data['url']);
 
         $job = (new GroupJob($data['url'], $data['count_posts'], $data['access_token']));

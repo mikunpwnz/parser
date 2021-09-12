@@ -57,18 +57,8 @@ class NoteJob implements ShouldQueue
                 $new_girl->first_name = $girl['first_name'];
                 $new_girl->last_name = $girl['last_name'];
                 $new_girl->photo = $girl['photo_200'];
-                if (isset($girl['last_seen'])) {
-                    $new_girl->last_seen = $girl['last_seen']['time'];
-                }
-                else {
-                    $new_girl->last_seen = '---';
-                }
-                if (isset($girl['bdate'])) {
-                    $new_girl->bdate = $girl['bdate'];
-                }
-                else {
-                    $new_girl->bdate = '---';
-                }
+                $new_girl->last_seen = (isset($girl['last_seen'])) ? $girl['last_seen'] : '0';
+                $new_girl->bdate = (isset($girl['bdate'])) ? $girl['bdate'] : '---';
                 $new_girl->save();
 
                 $new_girl->notes()->attach($note);
