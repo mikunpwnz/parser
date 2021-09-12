@@ -35,7 +35,8 @@ class GroupRequest extends FormRequest
         return [
             'url.unique' => 'Группа уже существует',
             'url.required' => 'Группа обязательна',
-            'count_posts.required' => 'Количество постов обязательно'
+            'count_posts.required' => 'Количество постов обязательно',
+            'access_token.required' => 'Вы не выбрали приложение'
         ];
     }
 }

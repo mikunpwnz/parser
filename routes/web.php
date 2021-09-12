@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 //
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/get-code/{id}', [\App\Http\Controllers\ApplicationController::class, 'getCode']);
+Route::get('/application/get-token', [\App\Http\Controllers\ApplicationController::class, 'getToken'])->name('get-token');
 
 Route::get('/{any}', function () {
     return view('welcome');

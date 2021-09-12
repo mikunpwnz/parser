@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use App\Events\ProgressAdded;
 use App\Events\ProgressAddedEvent;
 use App\Http\Requests\GroupRequest;
+use App\Jobs\GroupJob;
+use App\Models\Application;
 use App\Models\Group;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Pusher\Pusher;
+use Ratchet\App;
+use VK\Client\VKApiClient;
 
 class GroupController extends Controller
 {
@@ -40,9 +45,15 @@ class GroupController extends Controller
      */
     public function store(GroupRequest $request)
     {
-        $validated = $request->validated();
-        $data = ['message' => 'Группа успешно добавлена'];
-        return response()->json($data, 201);
+        $data = $request->validated();
+
+        $remove_char = ["https://", "http://", "/", 'vk.com', 'public'];
+        $groupName = str_replace($remove_char, "", $data['url']);
+
+        $job = (new GroupJob($data['url'], $data['count_posts'], $data['access_token']));
+        $this->dispatch($job);
+        $response = ['message' => 'Группа успешно добавлена'];
+        return response()->json($response, 201);
     }
 
     /**
@@ -93,10 +104,28 @@ class GroupController extends Controller
 
     public function socket()
     {
-        $group = Group::find(1);
+        $group = Group::find(2);
         $group->progress += 10;
         $group->save();
-        event(new ProgressAddedEvent($group->progress, 1));
+        event(new ProgressAddedEvent($group->progress, 2, 'privet'));
+    }
+
+    public function checkGroup(Request $request)
+    {
+        $data = $request->input();
+        $application = Application::where('worked', 0)->first();
+        $remove_char = ["https://", "http://", "/", 'vk.com', 'public', 'club'];
+        $group_id = str_replace($remove_char, "", $data['url']);
+
+        $vk = new VKApiClient();
+        $response = $vk->groups()->getById($application->access_token, array(
+            'group_ids' => $group_id,
+        ));
+        $group = Group::where('title', $response[0]['name'])->first();
+        if ($group) {
+            return response()->json('Группа уже существует', 404);
+        }
+        return response()->json('Можно парсить!');
     }
 
 }

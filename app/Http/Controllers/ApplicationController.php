@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Models\Group;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use VK\Client\VKApiClient;
 use VK\OAuth\Scopes\VKOAuthUserScope;
 use VK\OAuth\VKOAuth;
 use VK\OAuth\VKOAuthDisplay;
@@ -25,8 +27,13 @@ class ApplicationController extends Controller
 
     public function indexFreeApplication()
     {
-        $application = Application::where('worked', 0)->get();
-        return response()->json($application);
+        $applications = Application::where('worked', 0)->get();
+        $number = 1;
+        foreach ($applications as &$application) {
+            $application->id = $number;
+            $number++;
+        }
+        return response()->json($applications);
     }
 
     /**
@@ -55,7 +62,6 @@ class ApplicationController extends Controller
         $state = 'secret_state_code';
         $browser_url = $oauth->getAuthorizeUrl(VKOAuthResponseType::CODE, $data['client_id'], $data['redirect_uri'], $display, $scope, $state);
         $data['browser_url'] = $browser_url;
-
         Application::create($data);
         $response = [
             'data' => $data,
@@ -112,6 +118,25 @@ class ApplicationController extends Controller
     public function getCode($id)
     {
         $application = Application::find($id);
-        dd($application);
+        $application->need_token = 1;
+        $application->save();
+        return redirect()->to($application->browser_url);
+    }
+
+    public function getToken(Request $request)
+    {
+        $application = Application::where('need_token', 1)->first();
+        $code = $request->input('code');
+
+        $oauth = new VKOAuth();
+        $response = $oauth->getAccessToken($application->client_id, $application->client_secret, $application->redirect_uri, $code);
+
+        $application->access_token = $response['access_token'];
+        $application->vk_token_expires = Carbon::now()->addDay(1);
+        $application->need_token = 0;
+        $application->count = 0;
+        $application->save();
+
+        return redirect()->to('/applications');
     }
 }

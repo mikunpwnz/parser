@@ -19,10 +19,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::resource('book', \App\Http\Controllers\BookController::class);
-Route::resource('application', \App\Http\Controllers\ApplicationController::class);
+Route::resource('application', \App\Http\Controllers\ApplicationController::class,
+    ['only' => ['index', 'store']]);
 Route::get('application/free', [\App\Http\Controllers\ApplicationController::class, 'indexFreeApplication']);
 
 Route::resource('group', \App\Http\Controllers\GroupController::class);
+Route::post('check_group', [\App\Http\Controllers\GroupController::class, 'checkGroup']);
+
 Route::get('socket', [\App\Http\Controllers\GroupController::class, 'socket']);
 Route::get('/socket2', function () {
     broadcast(new ProgressAddedEvent(10));

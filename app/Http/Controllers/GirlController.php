@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Girl;
 use App\Models\Group;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class GirlController extends Controller
@@ -95,12 +96,26 @@ class GirlController extends Controller
 
     public function getGirlNormal()
     {
-        $girls = Girl::where('need_to_write', 1)
-            ->orderBy('last_seen', 'desc')
-            ->with('groups')
-            ->paginate(30);
-        $this->setDateFromTimestamp($girls);
-        return response()->json($girls);
+//        $girls = Girl::where('need_to_write', 1)
+//            ->orderBy('last_seen', 'desc')
+//            ->with('groups')
+//            ->paginate(30);
+//        $this->setDateFromTimestamp($girls);
+//        return response()->json($girls);
+        $client = new Client();
+        $response = $client->get('http://reddit.com/login', [
+            'auth' => [
+                'username',
+                'password'
+            ]
+        ]);
+        dd($response->getBody()->getContents());
+        echo $res->getStatusCode();
+// "200"
+        echo $res->getHeader('content-type')[0];
+// 'application/json; charset=utf8'
+        echo $res->getBody();
+        dd();
     }
 
     public function like(Request $request) {

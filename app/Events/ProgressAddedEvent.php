@@ -8,25 +8,28 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ProgressAddedEvent implements ShouldBroadcast
+class ProgressAddedEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $progress;
     public $group_id;
+    public $status;
 
     /**
      * Create a new event instance.
      *
      * @param $progress
      */
-    public function __construct($progress, $group_id)
+    public function __construct($progress, $group_id, $status)
     {
         $this->progress = $progress;
         $this->group_id = $group_id;
+        $this->status = $status;
     }
 
 

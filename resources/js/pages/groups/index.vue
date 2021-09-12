@@ -39,9 +39,11 @@
                                     md="12"
                                 >
                                     <v-text-field
-                                        :error-messages="form.errors.errors.url"
+                                        @input="checkAviableGroup"
+                                        :error-messages="error"
                                         label="Введите ссылку на группу"
                                         required
+                                        :success-messages="success_messages"
                                         v-model="form.url"
                                     ></v-text-field>
                                 </v-col>
@@ -63,6 +65,7 @@
                                 >
                                     <v-select
                                         :items="applications"
+                                        :error-messages="form.errors.errors.access_token"
                                         item-text="id"
                                         item-value="access_token"
                                         label="Приложение"
@@ -109,8 +112,6 @@
         </v-row>
 
 
-
-
         <v-row dense>
             <v-col
                 v-for="group in groups"
@@ -127,6 +128,7 @@
                         height="200px"
                     >
                         <v-card-title v-text="group.title"></v-card-title>
+                        <v-card-text v-text="group.status"></v-card-text>
                     </v-img>
 
                     <v-card-actions>
@@ -167,6 +169,8 @@
 <script>
 export default {
     data: () => ({
+        error: [],
+        success_messages: [],
         select: ['ky'],
         items: {},
         applications: {},
@@ -187,6 +191,7 @@ export default {
         submit() {
             this.form.post('/api/group')
                 .then(({data}) => {
+                    setTimeout(this.loadGroups(), 2000);
                     this.closeModal();
                     // console.log(data)
                     Toast.fire({
@@ -206,32 +211,52 @@ export default {
         socket() {
             axios.get("api/socket")
                 .then(({data}) => {
-                    // console.log('pizda')
+                    console.log('pf')
                 })
         },
+        checkAviableGroup() {
+
+            axios.post("api/check_group", {
+                url: this.form.url
+            })
+                .then(({data}) => {
+                    this.error = []
+                    this.success_messages = data
+                })
+            .catch((error) => {
+                this.success_messages = []
+                this.error = error.response.data
+            })
+        },
+        loadGroups() {
+            axios.get("api/group")
+                .then(({data}) => {
+                    this.groups = data
+                    let searchTerm = 3;
+                    let groupId = this.groups.find(group => group.id === searchTerm)
+                });
+        }
     },
     created() {
-        axios.get("api/group")
-            .then(({data}) => {
-                this.groups = data
-                let searchTerm = 3;
-                let groupId = this.groups.find(group => group.id === searchTerm)
-            });
+        this.loadGroups()
 
         axios.get("api/application/free")
             .then(({data}) => {
+                console.log(data)
                 this.applications = data
             });
     },
     mounted() {
         Echo.channel('progress')
             .listen('ProgressAddedEvent', (e) => {
-                // console.log(e)
+                console.log(e)
                 let group_id = e.group_id;
                 let progress = e.progress;
+                let status = e.status;
                 let group = this.groups.find(group => group.id === group_id)
                 let index = this.groups.indexOf(group)
                 this.groups[index].progress = progress
+                this.groups[index].status = status
             })
     },
 

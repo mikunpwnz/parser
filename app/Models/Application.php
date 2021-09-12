@@ -17,6 +17,7 @@ class Application extends Model
         'access_token',
         'vk_token_expires',
         'count',
-        'worked'
+        'worked',
+        'need_token'
     ];
 }

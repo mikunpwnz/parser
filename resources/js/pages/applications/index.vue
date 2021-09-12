@@ -109,8 +109,8 @@
                                 +
                             </v-btn>
                         </div>
-                        <v-card-title>{{application.count}} постов. {{application.vk_token_expires}}</v-card-title>
-                        <v-card-text v-text="">Пользователь</v-card-text>
+                        <v-card-title>{{application.count}} постов</v-card-title>
+                        <v-card-text>{{application.vk_token_expires}}</v-card-text>
                     </v-img>
 
                     <v-card-actions>
