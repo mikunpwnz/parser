@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\ProgressAddedEvent;
 use App\Models\Application;
+use App\Models\Girl;
 use App\Models\Group;
 use App\Models\Post;
 use Illuminate\Bus\Queueable;
@@ -225,8 +226,44 @@ class GroupJob implements ShouldQueue
 
     private function saveGirls($girls, $group)
     {
+        if(count($girls) === 0) {
+            return 1;
+        }
+
+        $cicles = 33.34/count($girls);
+        $count = 1;
+
+        foreach ($girls as $girl) {
+            $this->progress += $cicles;
+            $group->progress = $this->progress;
+            $group->status = 'Сохранение юзеров '.$count.'/'.count($girls);
+            $group->save();
+            event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
+            $new_girl = Girl::firstOrCreate(
+                ['url' => 'http://vk.com/id'.$girl['id']],
+                [
+                    'first_name' => $girl['first_name'],
+                    'last_name' => $girl['last_name'],
+                    'bdate' => $girl['bdate'],
+                    'last_seen' => $girl['last_seen'],
+                    'photo' => $girl['photo'],
+                ]
+            );
+
+            $post = Post::firstOrCreate(
+                ['url' => $girl['post']]
+            );
+
+            $new_girl->groups()->syncWithoutDetaching($group);
+            $new_girl->posts()->syncWithoutDetaching($post);
+
+            $count++;
+        }
+
+        $group_with_count = Group::where('id', $group->id)->withCount('girls')->get();
+        $count_girls = $group_with_count->girls_count;
         $this->progress = 100;
-        $this->status = 'Обработка закончена';
+        $this->status = 'Найдено '.$count_girls;
         $group->progress = $this->progress;
         $group->status = $this->status;
         $group->save();

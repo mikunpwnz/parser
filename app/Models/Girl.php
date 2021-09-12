@@ -9,6 +9,18 @@ class Girl extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'url',
+        'first_name',
+        'last_name',
+        'bdate',
+        'photo',
+        'wrote',
+        'need_to_write',
+        'last_seen',
+        'age'
+    ];
+
     public function groups()
     {
         return $this->belongsToMany(Group::class);

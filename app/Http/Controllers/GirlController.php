@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\Girl;
 use App\Models\Group;
 use Carbon\Carbon;
@@ -33,7 +34,7 @@ class GirlController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -44,7 +45,7 @@ class GirlController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -55,7 +56,7 @@ class GirlController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -66,8 +67,8 @@ class GirlController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -78,7 +79,7 @@ class GirlController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -96,29 +97,16 @@ class GirlController extends Controller
 
     public function getGirlNormal()
     {
-//        $girls = Girl::where('need_to_write', 1)
-//            ->orderBy('last_seen', 'desc')
-//            ->with('groups')
-//            ->paginate(30);
-//        $this->setDateFromTimestamp($girls);
-//        return response()->json($girls);
-        $client = new Client();
-        $response = $client->get('http://reddit.com/login', [
-            'auth' => [
-                'username',
-                'password'
-            ]
-        ]);
-        dd($response->getBody()->getContents());
-        echo $res->getStatusCode();
-// "200"
-        echo $res->getHeader('content-type')[0];
-// 'application/json; charset=utf8'
-        echo $res->getBody();
-        dd();
+        $girls = Girl::where('need_to_write', 1)
+            ->orderBy('last_seen', 'desc')
+            ->with('groups')
+            ->paginate(30);
+        $this->setDateFromTimestamp($girls);
+        return response()->json($girls);
     }
 
-    public function like(Request $request) {
+    public function like(Request $request)
+    {
         $id = $request->input('id');
         $girl = Girl::find($id);
         $girl->wrote = 0;
@@ -126,7 +114,8 @@ class GirlController extends Controller
         $girl->save();
     }
 
-    public function dislike(Request $request) {
+    public function dislike(Request $request)
+    {
         $id = $request->input('id');
         $girl = Girl::find($id);
         $girl->wrote = 1;

@@ -9,6 +9,14 @@ class Group extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'url_group',
+        'title',
+        'image',
+        'progress',
+        'status',
+    ];
+
     public function girls()
     {
         return $this->belongsToMany(Girl::class);
