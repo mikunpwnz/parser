@@ -247,17 +247,17 @@ export default {
             });
     },
     mounted() {
-        Echo.channel('progress')
-            .listen('ProgressAddedEvent', (e) => {
-                console.log(e)
-                let group_id = e.group_id;
-                let progress = e.progress;
-                let status = e.status;
-                let group = this.groups.find(group => group.id === group_id)
-                let index = this.groups.indexOf(group)
-                this.groups[index].progress = progress
-                this.groups[index].status = status
-            })
+        // Echo.channel('progress')
+        //     .listen('ProgressAddedEvent', (e) => {
+        //         console.log(e)
+        //         let group_id = e.group_id;
+        //         let progress = e.progress;
+        //         let status = e.status;
+        //         let group = this.groups.find(group => group.id === group_id)
+        //         let index = this.groups.indexOf(group)
+        //         this.groups[index].progress = progress
+        //         this.groups[index].status = status
+        //     })
     },
 
 }
