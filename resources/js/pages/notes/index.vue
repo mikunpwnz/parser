@@ -144,7 +144,7 @@ export default {
                     });
                 })
                 .catch(() => {
-                    // console.log(this.form);
+
                 });
         },
         closeModal() {
