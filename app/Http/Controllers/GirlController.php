@@ -8,6 +8,7 @@ use App\Models\Group;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GirlController extends Controller
 {
@@ -130,5 +131,28 @@ class GirlController extends Controller
                 ->format('H:i d/m/Y');
         }
         return $girls;
+    }
+
+    public function searchGirls(Request $request)
+    {
+        $search_string = $request->input('search_string');
+        $array = explode(' ', $search_string);
+        $girls = Girl::where('url', $search_string)
+            ->orWhere('first_name', 'LIKE', '%'.$search_string.'%')
+            ->orWhere('last_name', 'LIKE', '%'.$search_string.'%');
+        if (count($array) === 2) {
+            $girls = $girls
+                ->orWhere(function ($query) use ($array) {
+                    foreach($array as $item) {
+                        $query->where('first_name', $item)
+                            ->orWhere('last_name', $item);
+                    }
+            });
+        }
+        $girls = $girls->with('posts', 'groups')
+            ->withCount('groups')
+            ->orderBy('groups_count', 'DESC')
+            ->get();
+        return response()->json($girls);
     }
 }

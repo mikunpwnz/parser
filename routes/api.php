@@ -37,5 +37,6 @@ Route::get('/girl/group/{id}', [\App\Http\Controllers\GirlController::class, 'ge
 Route::get('/girl', [\App\Http\Controllers\GirlController::class, 'getGirlNormal']);
 Route::post('/girl/like', [\App\Http\Controllers\GirlController::class, 'like']);
 Route::post('/girl/dislike', [\App\Http\Controllers\GirlController::class, 'dislike']);
+Route::post('/girl/search', [\App\Http\Controllers\GirlController::class, 'searchGirls']);
 
 Route::resource('/note', \App\Http\Controllers\NoteController::class);

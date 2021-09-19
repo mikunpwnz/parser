@@ -67,6 +67,16 @@
                             </v-list-item-content>
                         </v-list-item>
                     </router-link>
+                    <router-link to="/search">
+                        <v-list-item
+                            link>
+                            <v-list-item-action>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>Поиск</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </router-link>
                 </v-list-group>
 
                 <v-list-group>

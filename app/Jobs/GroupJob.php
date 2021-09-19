@@ -133,6 +133,7 @@ class GroupJob implements ShouldQueue
         $users_id = '';
         $cicles = 33.33/count($posts_id);
         $count = 1;
+        $return_girls = [];
 
         foreach ($posts_id as $post_id) {
             for ($offset = 0; $offset < 30000; $offset += 1000) {
@@ -177,6 +178,7 @@ class GroupJob implements ShouldQueue
                 $girls = $this->findGirlsFromList($response);
                 foreach ($girls as &$girl) {
                     $girl['post'] = 'http://vk.com/wall-'.$this->group_id.'_'.$post_id;
+                    $return_girls[] = $girl;
                 }
 
                 $list_of_liked = [];
@@ -203,6 +205,7 @@ class GroupJob implements ShouldQueue
             event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
             ++$count;
         }
+        return $return_girls;
     }
 
     private function findGirlsFromList($users)
@@ -234,20 +237,20 @@ class GroupJob implements ShouldQueue
 
         $cicles = 33.34/count($girls);
         $count = 1;
-
         foreach ($girls as $girl) {
             $this->progress += $cicles;
             $group->progress = $this->progress;
             $group->status = 'Сохранение юзеров '.$count.'/'.count($girls);
             $group->save();
             event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
+
             $new_girl = Girl::firstOrCreate(
                 ['url' => 'http://vk.com/id'.$girl['id']],
                 [
                     'first_name' => $girl['first_name'],
                     'last_name' => $girl['last_name'],
                     'bdate' => $girl['bdate'],
-                    'last_seen' => $girl['last_seen'],
+                    'last_seen' => $girl['last_seen']['time'],
                     'photo' => $girl['photo'],
                 ]
             );
@@ -262,7 +265,7 @@ class GroupJob implements ShouldQueue
             $count++;
         }
 
-        $group_with_count = Group::where('id', $group->id)->withCount('girls')->get();
+        $group_with_count = Group::where('id', $group->id)->withCount('girls')->first();
         $count_girls = $group_with_count->girls_count;
         $this->progress = 100;
         $this->status = 'Найдено '.$count_girls;

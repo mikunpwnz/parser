@@ -10,7 +10,13 @@
 </style>
 <template>
     <v-container fluid>
+        <h1
+            v-if="girls.length === 0"
+        >
+            Пользователи не найдены
+        </h1>
         <v-pagination
+            v-if="girls.length !== 0"
             v-model="page"
             :length="length"
             circle
@@ -93,12 +99,12 @@
             </v-col>
         </v-row>
         <v-pagination
+            v-if="girls.length !== 0"
             v-model="page"
             :length="length"
             circle
             @input="getGirlFromGroup(groupId,page)"
         >
-
         </v-pagination>
     </v-container>
 </template>

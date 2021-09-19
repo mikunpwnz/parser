@@ -249,7 +249,7 @@ export default {
     mounted() {
         Echo.channel('progress')
             .listen('ProgressAddedEvent', (e) => {
-                // console.log(e)
+                console.log(e)
                 let group_id = e.group_id;
                 let progress = e.progress;
                 let status = e.status;
