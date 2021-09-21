@@ -212,6 +212,7 @@ class GirlController extends Controller
                     $girl->url = $chicken->url;
                     $girl->first_name = $chicken->first_name;
                     $girl->last_name = $chicken->last_name;
+                    $girl->bdate = $chicken->bdate;
                     $girl->photo = $chicken->photo;
                     $girl->wrote = $chicken->is_pisal;
                     $girl->need_to_write = $chicken->write;
