@@ -192,6 +192,7 @@ class GirlController extends Controller
 //
 //        dd($girls);
 
+        config(['database.connections.mysql.database' => 'parser']);
         $girls = Girl::all();
 
         config(['database.connections.mysql.database' => 'fromdump']);
@@ -203,7 +204,6 @@ class GirlController extends Controller
             ->get();
 
         config(['database.connections.mysql.database' => 'proverka']);
-
 
         foreach ($girls as $girl) {
             foreach ($chickens as $chicken) {
