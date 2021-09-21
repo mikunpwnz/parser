@@ -183,6 +183,14 @@ class GirlController extends Controller
     public function fix()
     {
 
+        $groups = Group::all();
+        foreach ($groups as $group) {
+            $group->status = 'Найдено '.$group->loadCount('girls')->girls_count.' пользователей';
+            $group->progress = 100;
+            $group->save();
+        }
+        dd();
+
         $notes = Note::all();
         foreach ($notes as $note) {
             $note->status = 'Найдено '.$note->loadCount('girls')->girls_count.' пользователей';
