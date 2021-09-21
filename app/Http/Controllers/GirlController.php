@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GroupAddedEvent;
+use App\Events\NoteAdded;
+use App\Events\ProgressAddedEvent;
 use App\Models\Book;
 use App\Models\Girl;
 use App\Models\Group;
+use App\Models\Note;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -91,7 +95,11 @@ class GirlController extends Controller
     public function getGirlFromGroup($id)
     {
         $group = Group::with('girls')->find($id);
-        $girls = $group->girls()->with('groups')->paginate(30);
+        $girls = $group
+            ->girls()
+            ->with('groups', 'notes')
+            ->orderBy('last_seen', 'DESC')
+            ->paginate(30);
         $this->setDateFromTimestamp($girls);
         return response()->json($girls);
     }
@@ -99,8 +107,22 @@ class GirlController extends Controller
     public function getGirlNormal()
     {
         $girls = Girl::where('need_to_write', 1)
-            ->orderBy('last_seen', 'desc')
-            ->with('groups')
+            ->with('groups', 'notes')
+            ->withCount('notes', 'groups')
+            ->orderBy('last_seen', 'DESC')
+            ->orderBy(DB::raw('groups_count + notes_count'), 'DESC')
+            ->paginate(30);
+        $this->setDateFromTimestamp($girls);
+        return response()->json($girls);
+    }
+
+    public function getGirlFromNote($id)
+    {
+        $note = Note::with('girls')->find($id);
+        $girls = $note->girls()
+            ->with('notes', 'groups')
+            ->withCount('notes', 'groups')
+            ->orderBy(DB::raw('groups_count + notes_count'), 'DESC')
             ->paginate(30);
         $this->setDateFromTimestamp($girls);
         return response()->json($girls);
@@ -143,16 +165,31 @@ class GirlController extends Controller
         if (count($array) === 2) {
             $girls = $girls
                 ->orWhere(function ($query) use ($array) {
-                    foreach($array as $item) {
-                        $query->where('first_name', $item)
-                            ->orWhere('last_name', $item);
-                    }
-            });
+                    $query->orWhere('first_name', $array[0])
+                        ->where('last_name',$array[1]);
+            })
+                ->orWhere(function ($query) use ($array) {
+                    $query->orWhere('first_name', $array[1])
+                        ->where('last_name', $array[0]);
+                });
         }
         $girls = $girls->with('posts', 'groups')
             ->withCount('groups')
             ->orderBy('groups_count', 'DESC')
             ->get();
         return response()->json($girls);
+    }
+
+    public function fix()
+    {
+        $note = Note::first();
+        event(new NoteAdded($note));
+        dd('ky');
+        $girls = Girl::where('url', 'LIKE', 'http:%')->get();
+        foreach ($girls as &$girl) {
+            $girl->url = str_replace('http', 'https', $girl->url);
+            $girl->save();
+        }
+        dd($girls);
     }
 }

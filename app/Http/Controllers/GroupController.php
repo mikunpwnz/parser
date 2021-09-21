@@ -104,10 +104,10 @@ class GroupController extends Controller
 
     public function socket()
     {
-        $group = Group::find(2);
+        $group = Group::find(4);
         $group->progress += 10;
-        $group->save();
-        event(new ProgressAddedEvent($group->progress, 2, 'privet'));
+//        $group->save();
+        event(new ProgressAddedEvent($group->progress, 4, 'privet'));
     }
 
     public function checkGroup(Request $request)

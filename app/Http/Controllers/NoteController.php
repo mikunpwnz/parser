@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProgressAddedForNoteEvent;
+use App\Jobs\NoteJob;
+use App\Models\Application;
 use App\Models\Note;
 use Illuminate\Http\Request;
 
@@ -37,8 +40,18 @@ class NoteController extends Controller
     public function store(Request $request)
     {
         $id = $request->input('girls_id');
-        $girls_id = str_replace('https://vk.com/id', '', explode("\r\n",$id));
-        return response()->json($girls_id);
+
+        $girls_id_with_https = str_replace("\n", ',', $id);
+        $girls_id_without_https = str_replace('https://vk.com/id', '', $girls_id_with_https);
+        $girls_id = explode(',', $girls_id_without_https);
+
+        $title = $request->input('title');
+        $application = Application::where('worked', 0)->first();
+
+        $job = (new NoteJob($title, $girls_id, $application->access_token));
+        $this->dispatch($job);
+        $response = ['message' => 'Музыка успешно добавлена'];
+        return response()->json($response, 201);
     }
 
     /**
@@ -84,5 +97,13 @@ class NoteController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function socket()
+    {
+        $note = Note::find(1);
+        $note->progress += 10;
+        $note->save();
+        event(new ProgressAddedForNoteEvent($note->progress, 1, 'y'));
     }
 }
