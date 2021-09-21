@@ -24,7 +24,7 @@ class GroupRequest extends FormRequest
     public function rules()
     {
         return [
-            'url' => 'required|unique:groups,url_group',
+            'url' => 'required',
             'count_posts' => 'required',
             'access_token' => 'required'
         ];
