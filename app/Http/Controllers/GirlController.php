@@ -183,6 +183,7 @@ class GirlController extends Controller
     public function fix()
     {
         $girls = Girl::where('url', 'LIKE', 'http:%')->get();
+        dd($girls);
         foreach ($girls as $girl) {
             $girl->url = str_replace('http', 'https', $girl->url);
             $girl->save();
