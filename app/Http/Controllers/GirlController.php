@@ -182,9 +182,6 @@ class GirlController extends Controller
 
     public function fix()
     {
-        $note = Note::first();
-        event(new NoteAdded($note));
-        dd('ky');
         $girls = Girl::where('url', 'LIKE', 'http:%')->get();
         foreach ($girls as &$girl) {
             $girl->url = str_replace('http', 'https', $girl->url);
