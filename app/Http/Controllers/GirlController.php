@@ -186,7 +186,7 @@ class GirlController extends Controller
         $notes = Note::all();
         foreach ($notes as $note) {
             $note->status = 'Найдено '.$note->loadCount('girls')->girls_count.' пользователей';
-            $note->progres = 100;
+            $note->progress = 100;
             $note->save();
         }
         dd();
