@@ -192,12 +192,7 @@ class GirlController extends Controller
 //
 //        dd($girls);
 
-        DB::purge('mysql');
-
-        config(['database.connections.mysql.database' => 'proverka']);
         $girls = Girl::all();
-
-        config(['database.connections.mysql.database' => 'fromdump']);
 
         $chickens = DB::table('chickens')
             ->join('chicken_note', 'chickens.id', '=', 'chicken_note.chicken_id')
@@ -205,7 +200,6 @@ class GirlController extends Controller
             ->select('chickens.*', 'notes.id as id_note', 'notes.title')
             ->get();
 
-        config(['database.connections.mysql.database' => 'proverka']);
 
         foreach ($girls as $girl) {
             foreach ($chickens as $chicken) {
