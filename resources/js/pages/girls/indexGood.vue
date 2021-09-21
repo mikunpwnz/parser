@@ -45,6 +45,7 @@
                                     style="height: 100%;"
                                 >
                                     <div>
+                                        <p v-for="note in girl.notes">{{ note.title }}</p>
                                         <p v-for="group in girl.groups">{{ group.title }}</p>
                                     </div>
                                 </div>

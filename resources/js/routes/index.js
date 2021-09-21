@@ -30,7 +30,7 @@ export default {
             component: ApplicationIndex,
         },
         {
-            path: '/note',
+            path: '/notes',
             name: 'notesindex',
             component: NotesIndex,
         },

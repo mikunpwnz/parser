@@ -28,6 +28,9 @@
             <thead>
             <tr>
                 <th class="text-left">
+                    ID
+                </th>
+                <th class="text-left">
                     Фото
                 </th>
                 <th class="text-left">
@@ -49,6 +52,7 @@
                 v-for="girl in girls"
                 :key="girl.id"
             >
+                <td>{{ girl.id }}</td>
                 <td>
                     <v-avatar
                         class="mt-3 mb-3"

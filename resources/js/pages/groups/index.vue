@@ -1,14 +1,5 @@
 <template>
     <v-container fluid>
-        <v-btn
-            @click="socket"
-            block
-            class="mb-4"
-            color="primary"
-            dark
-        >
-            Проверка сокета
-        </v-btn>
         <v-row justify="center">
             <v-dialog
                 v-model="modal"
@@ -175,7 +166,7 @@ export default {
         items: {},
         applications: {},
         modal: false,
-        groups: {},
+        groups: [],
         knowledge: 100,
         form: new Form({
             url: '',
@@ -231,6 +222,7 @@ export default {
         loadGroups() {
             axios.get("api/group")
                 .then(({data}) => {
+                    console.log(data)
                     this.groups = data
                     let searchTerm = 3;
                     let groupId = this.groups.find(group => group.id === searchTerm)
@@ -242,7 +234,6 @@ export default {
 
         axios.get("api/application/free")
             .then(({data}) => {
-                console.log(data)
                 this.applications = data
             });
     },
@@ -257,6 +248,10 @@ export default {
                 let index = this.groups.indexOf(group)
                 this.groups[index].progress = progress
                 this.groups[index].status = status
+            })
+        Echo.channel('group-added')
+            .listen('GroupAddedEvent', (e) => {
+                this.groups.push(e.group)
             })
     },
 

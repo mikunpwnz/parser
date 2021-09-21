@@ -95,10 +95,12 @@
                         height="200px"
                     >
                         <v-card-title v-text="note.title"></v-card-title>
+                        <v-card-text v-text="note.status"></v-card-text>
                     </v-img>
 
                     <v-card-actions>
                         <router-link
+                            v-if="note.progress === 100"
                             :to="'/note/' + note.id"
                             exact-path
                             custom
@@ -115,6 +117,13 @@
                                 Открыть
                             </v-btn>
                         </router-link>
+                        <v-progress-linear
+                            v-else
+                            v-model="note.progress"
+                            height="25"
+                        >
+                            <strong>{{ Math.ceil(note.progress) }}%</strong>
+                        </v-progress-linear>
                     </v-card-actions>
                 </v-card>
             </v-col>
@@ -126,7 +135,7 @@
 export default {
     data: () => ({
         modal: false,
-        notes: {},
+        notes: [],
         form: new Form({
             title: '',
             girls_id: '',
@@ -151,13 +160,39 @@ export default {
             this.modal = false;
             this.form.reset();
         },
+        // socket() {
+        //     axios.post("/api/note/socket")
+        //         .then(({data}) => {
+        //             console.log('pf')
+        //             console.log(data)
+        //         })
+        // }
     },
     created() {
         axios.get("api/note")
             .then(({data}) => {
+                console.log(data)
                 this.notes = data
             });
     },
-
+    mounted() {
+        Echo.channel('note-added')
+            .listen('NoteAdded', (e) => {
+                console.log(e)
+                this.notes.push(e.note)
+            })
+        Echo.channel('note-progress')
+            .listen('ProgressAddedForNoteEvent', (e) => {
+                console.log(e)
+                let note_id = e.note_id
+                let progress = e.progress
+                let status = e.status
+                let notes = this.notes.find(note => note.id === note_id)
+                console.log(notes)
+                let index = this.notes.indexOf(notes)
+                this.notes[index].progress = progress
+                this.notes[index].status = status
+            })
+    },
 }
 </script>
