@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Note extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'progress',
+        'status'
+    ];
+
+    public function girls()
+    {
+        return $this->belongsToMany(Girl::class);
+    }
 }
