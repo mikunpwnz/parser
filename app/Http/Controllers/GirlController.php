@@ -186,6 +186,7 @@ class GirlController extends Controller
         foreach ($girls as &$girl) {
             $girl->url = str_replace('http', 'https', $girl->url);
             $girl->save();
+            dd($girl);
         }
         dd($girls);
     }
