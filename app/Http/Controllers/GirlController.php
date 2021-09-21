@@ -182,6 +182,14 @@ class GirlController extends Controller
 
     public function fix()
     {
+
+        $notes = Note::all();
+        foreach ($notes as $note) {
+            $note->status = 'Найдено '.$note->loadCount('girls')->girls_count.' пользователей';
+            $note->progres = 100;
+            $note->save();
+        }
+        dd();
 //        config(['database.connections.mysql.database' => 'priv']);
 
 //        $girls = DB::table('girls')
