@@ -192,7 +192,7 @@ class GirlController extends Controller
 //
 //        dd($girls);
 
-        config(['database.connections.mysql.database' => 'parser']);
+        config(['database.connections.mysql.database' => 'proverka']);
         $girls = Girl::all();
 
         config(['database.connections.mysql.database' => 'fromdump']);
