@@ -194,12 +194,40 @@ class GirlController extends Controller
 
         $girls = Girl::all();
 
+
         $chickens = DB::table('chickens')
             ->join('chicken_note', 'chickens.id', '=', 'chicken_note.chicken_id')
             ->join('notes', 'chicken_note.note_id', '=', 'notes.id')
             ->select('chickens.*', 'notes.id as id_note', 'notes.title')
             ->get();
 
+        foreach ($chickens as $chicken) {
+            $filter = $girls->filter(function ($girl) use ($chicken) {
+                return $girl->url === $chicken->url;
+            });
+            if ($filter->isEmpty) {
+                $girl = new Girl();
+                $girl->url = $chicken->url;
+                $girl->first_name = $chicken->first_name;
+                $girl->last_name = $chicken->last_name;
+                $girl->bdate = $chicken->bdate;
+                $girl->photo = $chicken->photo;
+                $girl->wrote = $chicken->is_pisal;
+                $girl->need_to_write = $chicken->write;
+                $girl->last_seen = $chicken->last_seen;
+                $girl->age = $chicken->age;
+                $girl->save();
+
+                $note = Note::find($chicken->id_note);
+                $girl->notes()->syncWithoutDetaching($note);
+            }
+            else {
+                $girl = Girl::where('url', $chicken->url)->first();
+                $note = Note::find($chicken->id_note);
+                $girl->notes()->syncWithoutDetaching($note);
+            }
+        }
+        dd();
 
         foreach ($girls as $girl) {
             foreach ($chickens as $chicken) {
@@ -223,6 +251,7 @@ class GirlController extends Controller
                     $note = Note::find($chicken->id_note);
                     $girl->notes()->syncWithoutDetaching($note);
                 }
+
             }
         }
 
