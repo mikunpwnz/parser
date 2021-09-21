@@ -192,6 +192,8 @@ class GirlController extends Controller
 //
 //        dd($girls);
 
+        DB::purge('mysql');
+
         config(['database.connections.mysql.database' => 'proverka']);
         $girls = Girl::all();
 
