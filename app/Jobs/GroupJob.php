@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\GroupAddedEvent;
 use App\Events\ProgressAddedEvent;
 use App\Models\Application;
 use App\Models\Girl;
@@ -68,14 +69,18 @@ class GroupJob implements ShouldQueue
 
         $this->group_id = $response[0]['id'];
 
-        $group = new Group();
-        $group->url_group = $url;
-        $group->title = $response[0]['name'];
-        $group->image = $response[0]['photo_200'];
+        $group = Group::firstOrCreate(
+            ['url_group' => $url],
+            [
+                'title' => $response[0]['name'],
+                'image' => $response[0]['photo_200'],
+                'progress' => $this->progress,
+                'status' => $this->status,
+            ]
+        );
         $group->progress = $this->progress;
         $group->status = $this->status;
         $group->save();
-
         $this->group = $group;
     }
 
@@ -265,13 +270,14 @@ class GroupJob implements ShouldQueue
             $count++;
         }
 
-        $group_with_count = Group::where('id', $group->id)->withCount('girls')->first();
-        $count_girls = $group_with_count->girls_count;
         $this->progress = 100;
-        $this->status = 'Найдено '.$count_girls;
+        $this->status = 'Найдено '.$group->loadCount('girls')->girls_count.' пользователей';
         $group->progress = $this->progress;
         $group->status = $this->status;
         $group->save();
+        $application = Application::where('access_token', $this->access_token)->first();
+        $application->worked = 0;
+        $application->save();
         event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
     }
 }

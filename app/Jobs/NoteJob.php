@@ -2,6 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Events\GroupAddedEvent;
+use App\Events\NoteAdded;
+use App\Events\NoteAddedEзvent;
+use App\Events\ProgressAddedForNoteEvent;
 use App\Models\Girl;
 use App\Models\Note;
 use Illuminate\Bus\Queueable;
@@ -41,7 +45,9 @@ class NoteJob implements ShouldQueue
      */
     public function handle()
     {
-        $note = Note::create($this->title);
+        $note = Note::firstOrCreate(
+            ['title' => $this->title]
+        );
 
         $vk = new VKApiClient();
         $girls = $vk->users()->get($this->access_token, array(
@@ -49,23 +55,47 @@ class NoteJob implements ShouldQueue
             'fields' => 'photo_200,city,sex,bdate,last_seen'
         ));
 
-        foreach ($girls as $girl) {
-            $exist_girl = Girl::where('url', 'LIKE', '%'.$girl['id'])->first();
-            if (!$exist_girl) {
-                $new_girl = new Girl();
-                $new_girl->url = 'https://vk.com/id'.$girl['id'];
-                $new_girl->first_name = $girl['first_name'];
-                $new_girl->last_name = $girl['last_name'];
-                $new_girl->photo = $girl['photo_200'];
-                $new_girl->last_seen = (isset($girl['last_seen'])) ? $girl['last_seen'] : '0';
-                $new_girl->bdate = (isset($girl['bdate'])) ? $girl['bdate'] : '---';
-                $new_girl->save();
+        $cicles = 100/count($girls);
+        $progress = 0;
+        $status = 'Найдено '.count($girls).' пользователей';
 
-                $new_girl->notes()->attach($note);
-            }
-            else {
-                $exist_girl->notes()->attach($note);
-            }
+        $note->progress = $progress;
+        $note->status = $status;
+        $note->save();
+
+        event(new ProgressAddedForNoteEvent($progress, $note->id, $status));
+
+        $count = 1;
+        foreach ($girls as $girl) {
+            $new_girl = Girl::firstOrCreate(
+                ['url' => 'https://vk.com/id'.$girl['id']],
+                [
+                    'first_name' => $girl['first_name'],
+                    'last_name' => $girl['last_name'],
+                    'photo' => $girl['photo_200'],
+                    'last_seen' => (isset($girl['last_seen'])) ? $girl['last_seen']['time'] : '0',
+                    'bdate' => (isset($girl['bdate'])) ? $girl['bdate'] : '---'
+                ]
+            );
+            $new_girl->notes()->syncWithoutDetaching($note);
+
+            $progress += $cicles;
+            $status = 'Сохранение пользователей '.$count.'/'.count($girls);
+
+            $note->progress = $progress;
+            $note->status = $status;
+            $note->save();
+
+            event(new ProgressAddedForNoteEvent($progress, $note->id, $status));
+
+            $count++;
         }
+        $count = $note->loadCount('girls')->girls_count;
+        $progress = 100;
+        $status = 'Найдено '.$count.' пользователей';
+        $note->progress = $progress;
+        $note->status = $status;
+        $note->save();
+        event(new ProgressAddedForNoteEvent($progress, $note->id, $status));
     }
 }
