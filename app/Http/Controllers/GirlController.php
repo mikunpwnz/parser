@@ -205,7 +205,7 @@ class GirlController extends Controller
             $filter = $girls->filter(function ($girl) use ($chicken) {
                 return $girl->url === $chicken->url;
             });
-            if ($filter->isEmpty) {
+            if ($filter->isEmpty()) {
                 $girl = new Girl();
                 $girl->url = $chicken->url;
                 $girl->first_name = $chicken->first_name;
