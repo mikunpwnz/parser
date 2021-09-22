@@ -1,6 +1,14 @@
 <template>
     <v-container fluid>
         <v-row justify="center">
+            <v-btn
+                class="mb-4"
+                color="primary"
+                dark
+                @click="socket"
+            >
+                Проверка
+            </v-btn>
             <v-dialog
                 v-model="modal"
                 persistent
