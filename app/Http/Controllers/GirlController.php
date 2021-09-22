@@ -98,7 +98,8 @@ class GirlController extends Controller
         $girls = $group
             ->girls()
             ->with('groups', 'notes')
-            ->orderBy('last_seen', 'DESC');
+            ->orderBy('last_seen', 'DESC')
+            ->paginate(30);
         $this->setDateFromTimestamp($girls);
         return response()->json($girls);
     }
@@ -121,7 +122,6 @@ class GirlController extends Controller
         $girls = $note->girls()
             ->with('notes', 'groups')
             ->withCount('notes', 'groups')
-            ->orderBy(DB::raw('groups_count + notes_count'), 'DESC')
             ->paginate(30);
         $this->setDateFromTimestamp($girls);
         return response()->json($girls);
