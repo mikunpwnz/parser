@@ -98,8 +98,7 @@ class GirlController extends Controller
         $girls = $group
             ->girls()
             ->with('groups', 'notes')
-            ->orderBy('last_seen', 'DESC')
-            ->paginate(30);
+            ->orderBy('last_seen', 'DESC');
         $this->setDateFromTimestamp($girls);
         return response()->json($girls);
     }
@@ -183,13 +182,14 @@ class GirlController extends Controller
     public function fix()
     {
 
-        $groups = Group::all();
-        foreach ($groups as $group) {
-            $group->status = 'Найдено '.$group->loadCount('girls')->girls_count.' пользователей';
-            $group->progress = 100;
-            $group->save();
-        }
-        dd();
+
+//        $groups = Group::all();
+//        foreach ($groups as $group) {
+//            $group->status = 'Найдено '.$group->loadCount('girls')->girls_count.' пользователей';
+//            $group->progress = 100;
+//            $group->save();
+//        }
+//        dd();
 
         $notes = Note::all();
         foreach ($notes as $note) {
