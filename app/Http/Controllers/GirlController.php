@@ -184,13 +184,13 @@ class GirlController extends Controller
     {
 
 
-//        $groups = Group::all();
-//        foreach ($groups as $group) {
-//            $group->status = 'Найдено '.$group->loadCount('girls')->girls_count.' пользователей';
-//            $group->progress = 100;
-//            $group->save();
-//        }
-//        dd();
+        $groups = Group::all();
+        foreach ($groups as $group) {
+            $group->status = 'Найдено '.$group->loadCount('girls')->girls_count.' пользователей';
+            $group->progress = 100;
+            $group->save();
+        }
+        dd();
 
         $notes = Note::all();
         foreach ($notes as $note) {
