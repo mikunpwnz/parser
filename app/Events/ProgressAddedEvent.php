@@ -12,7 +12,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ProgressAddedEvent implements ShouldBroadcastNow
+class ProgressAddedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -40,6 +40,6 @@ class ProgressAddedEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('progress');
+        return ['progress'];
     }
 }
