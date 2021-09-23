@@ -10,6 +10,7 @@ use App\Models\Application;
 use App\Models\Group;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Pusher\Pusher;
 use Ratchet\App;
 use VK\Client\VKApiClient;
@@ -23,7 +24,18 @@ class GroupController extends Controller
      */
     public function index()
     {
-        $groups = Group::all();
+
+        $groups = Group::withCount(['girls as not_free_girls' => function ($q) {
+            $q->select(DB::raw('COUNT(first_name) as girls_sum'));
+            $q->where(function ($query) {
+                $query->where('need_to_write', 1);
+                $query->where('wrote', 0);
+            });
+            $q->orWhere(function ($query) {
+                $query->where('need_to_write', 0);
+                $query->where('wrote', 1);
+            });
+        }])->get();
         return response()->json($groups);
     }
 

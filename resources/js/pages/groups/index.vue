@@ -127,7 +127,14 @@
                         height="200px"
                     >
                         <v-card-title v-text="group.title"></v-card-title>
-                        <v-card-text v-text="group.status"></v-card-text>
+                        <v-card-text>
+                            <p>
+                                {{group.status}}
+                            </p>
+                            <p v-if="group.progress === 100">
+                                {{group.not_free_girls}} обработано
+                            </p>
+                        </v-card-text>
                     </v-img>
 
                     <v-card-actions>

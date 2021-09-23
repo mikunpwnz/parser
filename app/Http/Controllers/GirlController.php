@@ -192,13 +192,13 @@ class GirlController extends Controller
 //        }
 //        dd();
 
-        $notes = Note::all();
-        foreach ($notes as $note) {
-            $note->status = 'Найдено '.$note->loadCount('girls')->girls_count.' пользователей';
-            $note->progress = 100;
-            $note->save();
-        }
-        dd();
+//        $notes = Note::all();
+//        foreach ($notes as $note) {
+//            $note->status = 'Найдено '.$note->loadCount('girls')->girls_count.' пользователей';
+//            $note->progress = 100;
+//            $note->save();
+//        }
+//        dd();
 //        config(['database.connections.mysql.database' => 'priv']);
 
 //        $girls = DB::table('girls')
@@ -218,6 +218,7 @@ class GirlController extends Controller
             ->select('chickens.*', 'notes.id as id_note', 'notes.title')
             ->get();
 
+        $count = 1;
         foreach ($chickens as $chicken) {
             $filter = $girls->filter(function ($girl) use ($chicken) {
                 return $girl->url === $chicken->url;
@@ -243,6 +244,8 @@ class GirlController extends Controller
                 $note = Note::find($chicken->id_note);
                 $girl->notes()->syncWithoutDetaching($note);
             }
+            echo $count;
+            ++$count;
         }
         dd();
 

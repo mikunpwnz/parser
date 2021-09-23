@@ -70,7 +70,7 @@ class GroupJob implements ShouldQueue
         $this->group_id = $response[0]['id'];
 
         $group = Group::firstOrCreate(
-            ['url_group' => $url],
+            ['url_group' => 'https://vk.com/public'.$this->group_id],
             [
                 'title' => $response[0]['name'],
                 'image' => $response[0]['photo_200'],
@@ -236,9 +236,6 @@ class GroupJob implements ShouldQueue
 
     private function saveGirls($girls, $group)
     {
-        if(count($girls) === 0) {
-            return 1;
-        }
 
         $cicles = 33.34/count($girls);
         $count = 1;
@@ -250,7 +247,7 @@ class GroupJob implements ShouldQueue
             event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
 
             $new_girl = Girl::firstOrCreate(
-                ['url' => 'http://vk.com/id'.$girl['id']],
+                ['url' => 'https://vk.com/id'.$girl['id']],
                 [
                     'first_name' => $girl['first_name'],
                     'last_name' => $girl['last_name'],
