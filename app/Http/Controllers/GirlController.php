@@ -217,6 +217,7 @@ class GirlController extends Controller
             ->join('notes', 'chicken_note.note_id', '=', 'notes.id')
             ->select('chickens.*', 'notes.id as id_note', 'notes.title')
             ->get();
+        $chickens = DB::table('chickens')->get();
         dd($chickens);
         $count = 1;
         foreach ($chickens as $chicken) {
