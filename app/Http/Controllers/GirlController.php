@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\GroupAddedEvent;
 use App\Events\NoteAdded;
 use App\Events\ProgressAddedEvent;
+use App\Models\Application;
 use App\Models\Book;
 use App\Models\Girl;
 use App\Models\Group;
@@ -13,6 +14,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use VK\Client\VKApiClient;
 
 class GirlController extends Controller
 {
@@ -182,6 +184,28 @@ class GirlController extends Controller
 
     public function fix()
     {
+        $application = Application::first();
+        $access_token = $application->access_token;
+
+        $groups = Group::all();
+        $vk = new VKApiClient();
+
+
+        foreach ($groups as $group) {
+            $remove_char = ["https://", "http://", "/", 'vk.com', 'public', 'club'];
+            $group_id = str_replace($remove_char, "", $group->url_group);
+
+            $response = $vk->groups()->getById($access_token, array(
+                'group_ids' => $group_id,
+            ));
+
+            $group->url_group = 'https://vk.com/public'.$response[0]['id'];
+            $group->title = $response[0]['name'];
+            $group->image = $response[0]['photo_200'];
+            $group->save();
+            usleep(340000);
+        }
+        dd();
 
 
 //        $groups = Group::all();
