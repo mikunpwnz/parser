@@ -222,6 +222,7 @@ class GirlController extends Controller
         dd($chickens);
         $count = 1;
         foreach ($chickens as $chicken) {
+            $girls = Girl::all();
             $filter = $girls->filter(function ($girl) use ($chicken) {
                 return $girl->url === $chicken->url;
             });
@@ -246,6 +247,7 @@ class GirlController extends Controller
                 $note = Note::find($chicken->id_note);
                 $girl->notes()->syncWithoutDetaching($note);
             }
+
             echo $count;
             ++$count;
         }
