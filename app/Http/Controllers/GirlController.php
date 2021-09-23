@@ -193,6 +193,7 @@ class GirlController extends Controller
         $url = 'https://vk.com/zzzx10';
         $remove_char = ["https://vk.com/club", "https://vk.com/public", "https://vk.com/"];
         $group_id = str_replace($remove_char, "", $url);
+        dd($group_id);
 
         $response = $vk->groups()->getById($access_token, array(
             'group_ids' => $group_id,
