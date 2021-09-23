@@ -192,10 +192,18 @@ class GirlController extends Controller
 
 
         foreach ($groups as $group) {
-            $remove_char = ["https://", "http://", "/", 'vk.com', 'public', 'club'];
+            $remove_char = ["https://vk.com/club", "https://vk.com/public", "https://vk.com/"];
             $group_id = str_replace($remove_char, "", $group->url_group);
 
-            dump($group_id);
+            $response = $vk->groups()->getById($access_token, array(
+                'group_ids' => $group_id,
+            ));
+
+            $group->url_group = 'https://vk.com/public'.$response[0]['id'];
+            $group->title = $response[0]['name'];
+            $group->image = $response[0]['photo_200'];
+            $group->save();
+            usleep(340000);
         }
         dd();
 
