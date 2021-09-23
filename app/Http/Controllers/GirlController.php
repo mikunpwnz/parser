@@ -190,6 +190,14 @@ class GirlController extends Controller
         $groups = Group::all();
         $vk = new VKApiClient();
 
+        $url = 'https://vk.com/zzzx10';
+        $remove_char = ["https://vk.com/club", "https://vk.com/public", "https://vk.com/"];
+        $group_id = str_replace($remove_char, "", $url);
+
+        $response = $vk->groups()->getById($access_token, array(
+            'group_ids' => $group_id,
+        ));
+        dd($response);
 
         foreach ($groups as $group) {
             $remove_char = ["https://vk.com/club", "https://vk.com/public", "https://vk.com/"];
