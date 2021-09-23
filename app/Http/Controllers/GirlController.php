@@ -187,7 +187,11 @@ class GirlController extends Controller
         $application = Application::first();
         $access_token = $application->access_token;
 
-        $groups = Group::all();
+        $count = Group::count();
+        $skip = 42;
+        $take = $count - $skip;
+
+        $groups = Group::skip($skip)->take($take)->get();
         $vk = new VKApiClient();
 
 
