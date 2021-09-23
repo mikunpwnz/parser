@@ -62,8 +62,7 @@ class GroupJob implements ShouldQueue
 //        $remove_char = ["https://", "http://", "/", 'vk.com', 'public', 'club'];
         $remove_char = ["https://vk.com/public", "https://vk.com/club", "https://vk.com/"];
         $group_id = str_replace($remove_char, "", $url);
-        echo($group_id);
-        echo '<br>';
+        dump($group_id);
         $vk = new VKApiClient();
         $response = $vk->groups()->getById($access_token, array(
             'group_ids' => $group_id,
