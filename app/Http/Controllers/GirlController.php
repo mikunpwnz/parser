@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\GroupAddedEvent;
 use App\Events\NoteAdded;
 use App\Events\ProgressAddedEvent;
+use App\Jobs\UpdateOnlineJob;
 use App\Models\Application;
 use App\Models\Book;
 use App\Models\Girl;
@@ -180,6 +181,14 @@ class GirlController extends Controller
             ->orderBy('groups_count', 'DESC')
             ->get();
         return response()->json($girls);
+    }
+
+    public function updateOnline()
+    {
+        $job = (new UpdateOnlineJob());
+        $this->dispatch($job);
+        return response()->json('Обновление запущено');
+
     }
 
     public function fix()

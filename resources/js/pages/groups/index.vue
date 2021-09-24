@@ -5,9 +5,9 @@
                 class="mb-4"
                 color="primary"
                 dark
-                @click="socket"
+                @click="updateOnline"
             >
-                Проверка
+                Обновить
             </v-btn>
             <v-dialog
                 v-model="modal"
@@ -214,8 +214,8 @@ export default {
             this.form.reset();
         },
 
-        socket() {
-            axios.get("api/socket")
+        updateOnline() {
+            axios.post("api/girls/update-online")
                 .then(({data}) => {
                     console.log('pf')
                 })
