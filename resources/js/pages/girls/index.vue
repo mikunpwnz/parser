@@ -39,11 +39,10 @@
                     <v-hover v-slot="{ hover }">
                         <v-img
                             contain
-                            :src="girl.photo"
+                            :src="'http://46.175.146.87/'+girl.photo"
                             class="white--text align-end"
                             height="300px"
                         >
-
                             <v-card-text class="bg-dark p-0 pl-5">{{ girl.first_name }} {{ girl.last_name }} | {{ girl.bdate }}</v-card-text>
                             <v-expand-transition>
                                 <div

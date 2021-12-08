@@ -14,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use VK\Client\VKApiClient;
 
 class NoteJob implements ShouldQueue
@@ -52,7 +53,7 @@ class NoteJob implements ShouldQueue
         $vk = new VKApiClient();
         $girls = $vk->users()->get($this->access_token, array(
             'user_ids' => $this->girls_id,
-            'fields' => 'photo_200,city,sex,bdate,last_seen'
+            'fields' => 'photo_200,city,sex,bdate,last_seen,connections'
         ));
 
         $cicles = 100/count($girls);
@@ -72,11 +73,23 @@ class NoteJob implements ShouldQueue
                 [
                     'first_name' => $girl['first_name'],
                     'last_name' => $girl['last_name'],
-                    'photo' => $girl['photo_200'],
                     'last_seen' => (isset($girl['last_seen'])) ? $girl['last_seen']['time'] : '0',
-                    'bdate' => (isset($girl['bdate'])) ? $girl['bdate'] : '---'
+                    'bdate' => (isset($girl['bdate'])) ? $girl['bdate'] : '---',
+                    'photo' => '---',
+                    'instagram' => 'https://instagram.com/'.$girl['instagram'],
                 ]
             );
+
+            if (isset($girl['photo'])) {
+                try {
+                    Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
+                    $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
+                    $new_girl->save();
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+
             $new_girl->notes()->syncWithoutDetaching($note);
 
             $progress += $cicles;
