@@ -60,7 +60,7 @@ class UpdateOnlineJob implements ShouldQueue
 
             $getInfoUser = $vk->users()->get($access_token, array(
                 'user_ids' => $profilesId,
-                'fields' => 'photo_200,last_seen'
+                'fields' => 'photo_200,last_seen, connections'
             ));
             foreach ($getInfoUser as $user) {
                 if (isset($user['last_seen']['time'])) {
@@ -70,6 +70,9 @@ class UpdateOnlineJob implements ShouldQueue
                         Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
                         $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
                         $girl_new->url_photo = $user['photo_200'];
+                    }
+                    if(isset($user['instagram'])) {
+                        $girl_new->instagram = 'https://instagram.com/'.$user['instagram'];
                     }
                     $girl_new->save();
                 }
