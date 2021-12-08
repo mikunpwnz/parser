@@ -14,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use VK\Client\VKApiClient;
 
 class GroupJob implements ShouldQueue
@@ -29,6 +30,7 @@ class GroupJob implements ShouldQueue
     public $status;
     public $group;
     public $group_id;
+
     /**
      * Create a new job instance.
      *
@@ -70,7 +72,7 @@ class GroupJob implements ShouldQueue
         $this->group_id = $response[0]['id'];
 
         $group = Group::firstOrCreate(
-            ['url_group' => 'https://vk.com/public'.$this->group_id],
+            ['url_group' => 'https://vk.com/public' . $this->group_id],
             [
                 'title' => $response[0]['name'],
                 'image' => $response[0]['photo_200'],
@@ -96,13 +98,13 @@ class GroupJob implements ShouldQueue
     {
         $posts_id = [];
 
-        $cicles = ceil($count_post/100);
+        $cicles = ceil($count_post / 100);
         $counter = $count_post;
         $vk = new VKApiClient();
 
         for ($offset = 0; $offset < $counter; $offset += 100) {
             $response = $vk->wall()->get($access_token, [
-                'owner_id' => '-'. $this->group_id,
+                'owner_id' => '-' . $this->group_id,
                 'offset' => $offset,
                 'count' => $count_post
             ]);
@@ -113,7 +115,7 @@ class GroupJob implements ShouldQueue
                 $posts_id [] = $post['id'];
             }
             $count_post = $count_post - 100;
-            $calculated_progress = 33.33/$cicles;
+            $calculated_progress = 33.33 / $cicles;
 
             $this->progress += $calculated_progress;
             $this->status = 'Получение постов';
@@ -136,7 +138,7 @@ class GroupJob implements ShouldQueue
     {
         $vk = new VKApiClient();
         $users_id = '';
-        $cicles = 33.33/count($posts_id);
+        $cicles = 33.33 / count($posts_id);
         $count = 1;
         $return_girls = [];
 
@@ -177,12 +179,12 @@ class GroupJob implements ShouldQueue
 
                 $response = $vk->users()->get($access_token, [
                     'user_ids' => $users_id,
-                    'fields' => 'photo_200,city,sex,bdate,last_seen'
+                    'fields' => 'photo_200,city,sex,bdate,last_seen,connections'
                 ]);
 
                 $girls = $this->findGirlsFromList($response);
                 foreach ($girls as &$girl) {
-                    $girl['post'] = 'http://vk.com/wall-'.$this->group_id.'_'.$post_id;
+                    $girl['post'] = 'http://vk.com/wall-' . $this->group_id . '_' . $post_id;
                     $return_girls[] = $girl;
                 }
 
@@ -197,13 +199,13 @@ class GroupJob implements ShouldQueue
             }
 
             $post = Post::firstOrCreate([
-                'url' => 'http://vk.com/wall-'.$this->group_id.'_'.$post_id
+                'url' => 'http://vk.com/wall-' . $this->group_id . '_' . $post_id
             ]);
 
             $list_of_liked = [];
 
             $this->progress += $cicles;
-            $this->status = 'Обработка постов '.$count.'/'.$this->count_post;
+            $this->status = 'Обработка постов ' . $count . '/' . $this->count_post;
             $group->progress = $this->progress;
             $group->status = $this->status;
             $group->save();
@@ -220,14 +222,15 @@ class GroupJob implements ShouldQueue
             if (!isset($user['city'])) {
                 continue;
             }
-            if($user['sex'] == 1 and $user['city']['id'] == 650) {
+            if ($user['sex'] == 1 and $user['city']['id'] == 650) {
                 $girls [] = [
                     'id' => $user['id'],
                     'first_name' => $user['first_name'],
                     'last_name' => $user['last_name'],
                     'photo' => $user['photo_200'],
                     'bdate' => (isset($user['bdate'])) ? $user['bdate'] : '---',
-                    'last_seen' => (isset($user['last_seen'])) ? $user['last_seen'] : '0'
+                    'last_seen' => (isset($user['last_seen'])) ? $user['last_seen'] : '0',
+                    'instagram' => (isset($user['instagram'])) ? 'https://instagram.com/' . $user['instagram'] : '---',
                 ];
             }
         }
@@ -237,25 +240,29 @@ class GroupJob implements ShouldQueue
     private function saveGirls($girls, $group)
     {
 
-        $cicles = 33.34/count($girls);
+        $cicles = 33.34 / count($girls);
         $count = 1;
         foreach ($girls as $girl) {
             $this->progress += $cicles;
             $group->progress = $this->progress;
-            $group->status = 'Сохранение юзеров '.$count.'/'.count($girls);
+            $group->status = 'Сохранение юзеров ' . $count . '/' . count($girls);
             $group->save();
             event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
 
             $new_girl = Girl::firstOrCreate(
-                ['url' => 'https://vk.com/id'.$girl['id']],
+                ['url' => 'https://vk.com/id' . $girl['id']],
                 [
                     'first_name' => $girl['first_name'],
                     'last_name' => $girl['last_name'],
                     'bdate' => $girl['bdate'],
                     'last_seen' => $girl['last_seen']['time'],
-                    'photo' => $girl['photo'],
+                    'photo' => '---',
+                    'instagram' => 'https://instagram.com/'.$girl['instagram'],
                 ]
             );
+            Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
+            $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
+            $new_girl->save();
 
             $post = Post::firstOrCreate(
                 ['url' => $girl['post']]
@@ -268,7 +275,7 @@ class GroupJob implements ShouldQueue
         }
 
         $this->progress = 100;
-        $this->status = 'Найдено '.$group->loadCount('girls')->girls_count.' пользователей';
+        $this->status = 'Найдено ' . $group->loadCount('girls')->girls_count . ' пользователей';
         $group->progress = $this->progress;
         $group->status = $this->status;
         $group->save();

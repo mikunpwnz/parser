@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use VK\Client\VKApiClient;
 
 class UpdateOnlineJob implements ShouldQueue
@@ -65,7 +66,8 @@ class UpdateOnlineJob implements ShouldQueue
                 if (isset($user['last_seen']['time'])) {
                     $girl_new = Girl::where('url', 'like', '%'.$user['id'])->first();
                     $girl_new->last_seen = $user['last_seen']['time'];
-                    $girl_new->photo = $user['photo_200'];
+                    Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
+                    $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
                     $girl_new->save();
                 }
                 ++$counter;

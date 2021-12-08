@@ -73,6 +73,19 @@
                             </v-icon>
                         </v-btn>
 
+                        <v-btn
+                            v-if="girl.instagram !== '---'"
+                            target="_blank"
+                            :href="girl.instagram"
+                            x-large
+                            icon
+                        >
+                            <v-icon
+                                color="cyan accent-1"
+                            >mdi-instagram
+                            </v-icon>
+                        </v-btn>
+
                         <v-card-text class="p-0 pr-1">{{ girl.last_seen }}</v-card-text>
                         <v-spacer></v-spacer>
                         <v-btn
