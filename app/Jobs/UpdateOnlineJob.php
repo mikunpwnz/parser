@@ -17,7 +17,7 @@ class UpdateOnlineJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 8000;
+    public $timeout = 36000;
     /**
      * Create a new job instance.
      *
@@ -66,8 +66,11 @@ class UpdateOnlineJob implements ShouldQueue
                 if (isset($user['last_seen']['time'])) {
                     $girl_new = Girl::where('url', 'like', '%'.$user['id'])->first();
                     $girl_new->last_seen = $user['last_seen']['time'];
-                    Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
-                    $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
+                    if ($user['photo_200'] !== $girl_new->url_photo) {
+                        Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
+                        $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
+                        $girl_new->url_photo = $user['photo_200'];
+                    }
                     $girl_new->save();
                 }
                 ++$counter;
