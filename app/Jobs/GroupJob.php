@@ -260,9 +260,11 @@ class GroupJob implements ShouldQueue
                     'instagram' => 'https://instagram.com/'.$girl['instagram'],
                 ]
             );
-            Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
-            $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
-            $new_girl->save();
+            if (isset($girl['photo'])) {
+                Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
+                $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
+                $new_girl->save();
+            }
 
             $post = Post::firstOrCreate(
                 ['url' => $girl['post']]
