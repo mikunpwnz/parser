@@ -67,9 +67,13 @@ class UpdateOnlineJob implements ShouldQueue
                     $girl_new = Girl::where('url', 'like', '%'.$user['id'])->first();
                     $girl_new->last_seen = $user['last_seen']['time'];
                     if ($girl_new->url_photo !== '---') {
-                        Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
-                        $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
-                        $girl_new->url_photo = $user['photo_200'];
+                        try {
+                            Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
+                            $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
+                            $girl_new->url_photo = $user['photo_200'];
+                        } catch (\Exception $e) {
+                            continue;
+                        }
                     }
 //                    $girl_new->url_photo = $user['photo_200'];
                     if(isset($user['instagram'])) {
