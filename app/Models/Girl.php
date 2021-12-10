@@ -18,7 +18,9 @@ class Girl extends Model
         'wrote',
         'need_to_write',
         'last_seen',
-        'age'
+        'age',
+        'instagram',
+        'url_photo',
     ];
 
     public function groups()
