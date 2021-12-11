@@ -66,11 +66,11 @@ class UpdateGroupsCommand extends Command
             try {
                 Storage::disk('public')->put('groups/'.$group->id.'_photo.jpg', file_get_contents($response[0]['photo_200']));
                 $group->image = 'storage/groups/'.$group->id.'_photo.jpg';
-                $group->save();
+                $group->save(['timestamps' => false]);
             } catch (\Exception $e) {
                 return;
             }
-            $group->save();
+            $group->save(['timestamps' => false]);
             usleep(350000);
         }
 
