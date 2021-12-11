@@ -132,7 +132,7 @@
                                 {{group.status}}
                             </p>
                             <p v-if="group.progress === 100">
-                                {{group.not_free_girls}} обработано
+                                {{group.not_free_girls}} обработано / {{group.updated}}
                             </p>
                         </v-card-text>
                     </v-img>
