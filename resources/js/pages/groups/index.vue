@@ -121,17 +121,17 @@
             >
                 <v-card>
                     <v-img
-                        :src="group.image"
+                        :src="'http://46.175.146.87/storage/groups/2_photo.jpg'"
                         class="white--text align-end"
                         gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                         height="200px"
                     >
-                        <v-card-title v-text="group.title"></v-card-title>
+                        <v-card-title class="obvodka" v-text="group.title"></v-card-title>
                         <v-card-text>
-                            <p>
+                            <p class="obvodka">
                                 {{group.status}}
                             </p>
-                            <p v-if="group.progress === 100">
+                            <p class="obvodka" v-if="group.progress === 100">
                                 {{group.not_free_girls}} обработано / {{group.updated}}
                             </p>
                         </v-card-text>
@@ -272,3 +272,29 @@ export default {
 
 }
 </script>
+
+<style>
+.obvodka {
+    text-shadow:
+        -0  -1px  0   #000000,
+        0   -1px  0   #000000,
+        -0   1px  0   #000000,
+        0    1px  0   #000000,
+        -1px -0   0   #000000,
+        1px  -0   0   #000000,
+        -1px  0   0   #000000,
+        1px   0   0   #000000,
+        -1px -1px 0   #000000,
+        1px  -1px 0   #000000,
+        -1px  1px 0   #000000,
+        1px   1px 0   #000000,
+        -1px -1px 0   #000000,
+        1px  -1px 0   #000000,
+        -1px  1px 0   #000000,
+        1px   1px 0   #000000;
+}
+/*.obvodka {*/
+/*    text-shadow: black 1px 1.5px 0, black -1px -1px 0,*/
+/*    black -1px 1px 0, black 1px -1px 0;*/
+/*}*/
+</style>
