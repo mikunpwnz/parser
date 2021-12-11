@@ -52,6 +52,7 @@ class UpdateGroupsCommand extends Command
         foreach ($groups as $key=>$group) {
             $remove_char = ["https://", "http://", "/", 'vk.com', '/public', '/club'];
             $group_id = str_replace($remove_char, "", $group->url_group);
+            dd($group_id);
             $response = $vk->groups()->getById($access_token, array(
                 'group_ids' => $group_id,
             ));
