@@ -39,7 +39,7 @@
                     <v-hover v-slot="{ hover }">
                         <v-img
                             contain
-                            :src="'http://46.175.146.87/'+girl.photo"
+                            :src=girl.photo
                             class="white--text align-end"
                             height="300px"
                         >
