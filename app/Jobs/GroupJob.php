@@ -80,16 +80,14 @@ class GroupJob implements ShouldQueue
                 'status' => $this->status,
             ]
         );
-
-        Storage::disk('public')->put('groups/'.$group->id.'_photo.jpg', file_get_contents($response[0]['photo_200']));
-        $group->image = 'storage/groups/'.$group->id.'_photo.jpg';
-        $group->save();
-        dd();
-//        try {
-//
-//        } catch (\Exception $e) {
-//            return;
-//        }
+        
+        try {
+            Storage::disk('public')->put('groups/'.$group->id.'_photo.jpg', file_get_contents($response[0]['photo_200']));
+            $group->image = 'storage/groups/'.$group->id.'_photo.jpg';
+            $group->save();
+        } catch (\Exception $e) {
+            return;
+        }
 
         $group->progress = $this->progress;
         $group->status = $this->status;
