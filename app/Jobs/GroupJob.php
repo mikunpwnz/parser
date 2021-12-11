@@ -266,6 +266,7 @@ class GroupJob implements ShouldQueue
                     'bdate' => $girl['bdate'],
                     'last_seen' => $girl['last_seen']['time'],
                     'photo' => '---',
+                    'url_photo' => $girl['photo'],
                     'instagram' => 'https://instagram.com/'.$girl['instagram'],
                 ]
             );
