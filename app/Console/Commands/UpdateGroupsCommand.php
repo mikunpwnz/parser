@@ -71,7 +71,7 @@ class UpdateGroupsCommand extends Command
             }
 
             $group->save();
-            $this->info('Обработка'.$key.' из '.$count);
+            $this->info('Обработка '.$key.' из '.$count.'. '.$item['name']);
         }
 
     }
