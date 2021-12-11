@@ -128,9 +128,9 @@ class GroupJob implements ShouldQueue
 
             $this->progress += $calculated_progress;
             $this->status = 'Получение постов';
-            echo $group->progress;
-            echo $this->progress;
+            echo $this->progress.PHP_EOL;
             $group->progress = $this->progress;
+            echo $group->progress;
             $group->status = $this->status;
             $group->save();
             event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
@@ -250,48 +250,48 @@ class GroupJob implements ShouldQueue
 
     private function saveGirls($girls, $group)
     {
+        if(count($girls) !== 0) {
+            $cicles = 33.34 / count($girls);
+            $count = 1;
+            foreach ($girls as $girl) {
+                $this->progress += $cicles;
+                $group->progress = $this->progress;
+                $group->status = 'Сохранение юзеров ' . $count . '/' . count($girls);
+                $group->save();
+                event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
 
-        $cicles = 33.34 / count($girls);
-        $count = 1;
-        foreach ($girls as $girl) {
-            $this->progress += $cicles;
-            $group->progress = $this->progress;
-            $group->status = 'Сохранение юзеров ' . $count . '/' . count($girls);
-            $group->save();
-            event(new ProgressAddedEvent($group->progress, $group->id, $group->status));
-
-            $new_girl = Girl::firstOrCreate(
-                ['url' => 'https://vk.com/id' . $girl['id']],
-                [
-                    'first_name' => $girl['first_name'],
-                    'last_name' => $girl['last_name'],
-                    'bdate' => $girl['bdate'],
-                    'last_seen' => $girl['last_seen']['time'],
-                    'photo' => '---',
-                    'url_photo' => $girl['photo'],
-                    'instagram' => 'https://instagram.com/'.$girl['instagram'],
-                ]
-            );
-            if (isset($girl['photo'])) {
-                try {
-                    Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
-                    $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
-                    $new_girl->save();
-                } catch (\Exception $e) {
-                    continue;
+                $new_girl = Girl::firstOrCreate(
+                    ['url' => 'https://vk.com/id' . $girl['id']],
+                    [
+                        'first_name' => $girl['first_name'],
+                        'last_name' => $girl['last_name'],
+                        'bdate' => $girl['bdate'],
+                        'last_seen' => $girl['last_seen']['time'],
+                        'photo' => '---',
+                        'url_photo' => $girl['photo'],
+                        'instagram' => 'https://instagram.com/'.$girl['instagram'],
+                    ]
+                );
+                if (isset($girl['photo'])) {
+                    try {
+                        Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
+                        $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
+                        $new_girl->save();
+                    } catch (\Exception $e) {
+                        continue;
+                    }
                 }
+
+                $post = Post::firstOrCreate(
+                    ['url' => $girl['post']]
+                );
+
+                $new_girl->groups()->syncWithoutDetaching($group);
+                $new_girl->posts()->syncWithoutDetaching($post);
+
+                $count++;
             }
-
-            $post = Post::firstOrCreate(
-                ['url' => $girl['post']]
-            );
-
-            $new_girl->groups()->syncWithoutDetaching($group);
-            $new_girl->posts()->syncWithoutDetaching($post);
-
-            $count++;
         }
-
         $this->progress = 100;
         $this->status = 'Найдено ' . $group->loadCount('girls')->girls_count . ' пользователей';
         $group->progress = $this->progress;
