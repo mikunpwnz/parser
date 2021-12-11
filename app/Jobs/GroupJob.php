@@ -128,6 +128,8 @@ class GroupJob implements ShouldQueue
 
             $this->progress += $calculated_progress;
             $this->status = 'Получение постов';
+            echo $group->progress.PHP_EOL;
+            echo $this->progress.PHP_EOL;
             $group->progress = $this->progress;
             $group->status = $this->status;
             $group->save();
