@@ -59,6 +59,7 @@ class UpdateGroupsCommand extends Command
         ));
 
         foreach ($response as $key=>$item) {
+            $this->info('Обработка '.$key.' из '.$count.'. '.$item['name']);
             $group = Group::where('title', $item['name'])->first();
             $group->url_group = 'https://vk.com/public'.$item['id'];
 
@@ -71,7 +72,6 @@ class UpdateGroupsCommand extends Command
             }
 
             $group->save();
-            $this->info('Обработка '.$key.' из '.$count.'. '.$item['name']);
         }
 
     }
