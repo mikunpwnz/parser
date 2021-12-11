@@ -133,7 +133,8 @@ class GroupController extends Controller
         $response = $vk->groups()->getById($application->access_token, array(
             'group_ids' => $group_id,
         ));
-        $group = Group::where('title', $response[0]['name'])->first();
+        $id_group = 'https://vk.com/public'.$response[0]['id'];
+        $group = Group::where('url_group', $id_group)->first();
         if ($group) {
             return response()->json('Группа уже существует', 404);
         }
