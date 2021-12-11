@@ -47,32 +47,56 @@ class UpdateGroupsCommand extends Command
         $groups = Group::all();
         $group_ids = [];
         $count = Group::count();
-
-        foreach ($groups as $group) {
-            $remove_char = ["https://", "http://", "/", 'vk.com', '/public', '/club'];
-            $group_ids [] = str_replace($remove_char, "", $group->url_group);
-        }
-
         $vk = new VKApiClient();
-        $response = $vk->groups()->getById($access_token, array(
-            'group_ids' => $group_ids,
-        ));
 
-        foreach ($response as $key=>$item) {
-            $this->info('Обработка '.$key.' из '.$count.'. '.$item['name']);
-            $group = Group::where('title', $item['name'])->first();
-            $group->url_group = 'https://vk.com/public'.$item['id'];
+        foreach ($groups as $key=>$group) {
+            $remove_char = ["https://", "http://", "/", 'vk.com', '/public', '/club'];
+            $group_id = str_replace($remove_char, "", $group->url_group);
+            $response = $vk->groups()->getById($access_token, array(
+                'group_ids' => $group_id,
+            ));
+
+            $this->info('Обработка '.$key.' из '.$count.'. '.$response[0]['name']);
+
+            $group->title = $response[0]['name'];
+            $group->url_group = 'https://vk.com/public'.$response[0]['id'];
 
             try {
-                Storage::disk('public')->put('groups/'.$group->id.'_photo.jpg', file_get_contents($item['photo_200']));
+                Storage::disk('public')->put('groups/'.$group->id.'_photo.jpg', file_get_contents($response[0]['photo_200']));
                 $group->image = 'storage/groups/'.$group->id.'_photo.jpg';
                 $group->save();
             } catch (\Exception $e) {
                 return;
             }
-
             $group->save();
+            usleep(350000);
         }
+
+//        foreach ($groups as $group) {
+//            $remove_char = ["https://", "http://", "/", 'vk.com', '/public', '/club'];
+//            $group_ids [] = str_replace($remove_char, "", $group->url_group);
+//        }
+//
+//
+//        $response = $vk->groups()->getById($access_token, array(
+//            'group_ids' => $group_ids,
+//        ));
+//
+//        foreach ($response as $key=>$item) {
+//            $this->info('Обработка '.$key.' из '.$count.'. '.$item['name']);
+//            $group = Group::where('title', $item['name'])->first();
+//            $group->url_group = 'https://vk.com/public'.$item['id'];
+//
+//            try {
+//                Storage::disk('public')->put('groups/'.$group->id.'_photo.jpg', file_get_contents($item['photo_200']));
+//                $group->image = 'storage/groups/'.$group->id.'_photo.jpg';
+//                $group->save();
+//            } catch (\Exception $e) {
+//                return;
+//            }
+//
+//            $group->save();
+//        }
 
     }
 }
