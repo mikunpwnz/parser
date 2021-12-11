@@ -8,6 +8,7 @@ use App\Http\Requests\GroupRequest;
 use App\Jobs\GroupJob;
 use App\Models\Application;
 use App\Models\Group;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,9 @@ class GroupController extends Controller
                 $query->where('wrote', 1);
             });
         }])->get();
+        foreach ($groups as $group) {
+            $group->updated = $group->updated_at->format('H:i d/m/Y');
+        }
         return response()->json($groups);
     }
 
