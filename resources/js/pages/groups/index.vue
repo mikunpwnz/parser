@@ -121,7 +121,7 @@
             >
                 <v-card>
                     <v-img
-                        :src="'http://46.175.146.87/storage/groups/2_photo.jpg'"
+                        :src="group.photo"
                         class="white--text align-end"
                         gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
                         height="200px"
