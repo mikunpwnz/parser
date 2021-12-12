@@ -79,6 +79,10 @@ class UpdateOnlineJob implements ShouldQueue
                     if(isset($user['instagram'])) {
                         $girl_new->instagram = 'https://instagram.com/'.$user['instagram'];
                     }
+                    else
+                    {
+                        $girl_new->instagram = '---';
+                    }
                     $girl_new->save();
                 }
                 ++$counter;

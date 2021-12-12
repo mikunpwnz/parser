@@ -80,7 +80,7 @@ class GroupJob implements ShouldQueue
                 'status' => $this->status,
             ]
         );
-        
+
         try {
             Storage::disk('public')->put('groups/'.$group->id.'_photo.jpg', file_get_contents($response[0]['photo_200']));
             $group->image = 'storage/groups/'.$group->id.'_photo.jpg';
@@ -269,7 +269,7 @@ class GroupJob implements ShouldQueue
                         'last_seen' => $girl['last_seen']['time'],
                         'photo' => '---',
                         'url_photo' => $girl['photo'],
-                        'instagram' => 'https://instagram.com/'.$girl['instagram'],
+                        'instagram' => $girl['instagram'],
                     ]
                 );
                 if (isset($girl['photo'])) {
