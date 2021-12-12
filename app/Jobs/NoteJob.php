@@ -76,14 +76,14 @@ class NoteJob implements ShouldQueue
                     'last_seen' => (isset($girl['last_seen'])) ? $girl['last_seen']['time'] : '0',
                     'bdate' => (isset($girl['bdate'])) ? $girl['bdate'] : '---',
                     'photo' => '---',
-                    'url_photo' => $girl['photo'],
+                    'url_photo' => $girl['photo_200'],
                     'instagram' => (isset($girl['instagram'])) ? 'https://instagram.com/'.$girl['instagram'] : '---',
                 ]
             );
 
             if (isset($girl['photo'])) {
                 try {
-                    Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
+                    Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo_200']));
                     $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
                     $new_girl->save();
                 } catch (\Exception $e) {
