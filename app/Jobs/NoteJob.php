@@ -76,6 +76,7 @@ class NoteJob implements ShouldQueue
                     'last_seen' => (isset($girl['last_seen'])) ? $girl['last_seen']['time'] : '0',
                     'bdate' => (isset($girl['bdate'])) ? $girl['bdate'] : '---',
                     'photo' => '---',
+                    'url_photo' => $girl['photo'],
                     'instagram' => (isset($girl['instagram'])) ? 'https://instagram.com/'.$girl['instagram'] : '---',
                 ]
             );
