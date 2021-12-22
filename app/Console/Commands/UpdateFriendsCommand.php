@@ -67,6 +67,7 @@ class UpdateFriendsCommand extends Command
                     'fields' => 'city,sex,bdate,last_seen,photo_200_orig',
                 ));
                 foreach ($getListFriends as $friend) {
+                    echo 'ДРУЖБАН';
                     if (!isset($friend['city'])) {
                         continue;
                     }
