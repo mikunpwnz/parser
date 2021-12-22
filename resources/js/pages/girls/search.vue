@@ -5,6 +5,7 @@
                 label="Введите запрос"
                 required
                 v-model="search_string"
+                @keyup.enter="submit"
             ></v-text-field>
             <v-btn
                 @click.prevent="submit"
