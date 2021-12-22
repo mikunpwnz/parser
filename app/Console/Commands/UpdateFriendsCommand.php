@@ -66,9 +66,7 @@ class UpdateFriendsCommand extends Command
                     'order' => 'name',
                     'fields' => 'city,sex,bdate,last_seen,photo_200_orig',
                 ));
-                foreach ($getListFriends as $friend) {
-                    dump($getListFriends);
-                    dd($friend);
+                foreach ($getListFriends['items'] as $friend) {
                     if (!isset($friend['city'])) {
                         continue;
                     }
