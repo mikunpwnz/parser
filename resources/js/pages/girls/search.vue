@@ -54,13 +54,15 @@
             >
                 <td>{{ girl.id }}</td>
                 <td>
-                    <v-avatar
-                        class="mt-3 mb-3"
-                        size="128">
-                        <img
-                            :src=girl.photo
-                        >
-                    </v-avatar>
+                    <a :href="girl.url">
+                        <v-avatar
+                            class="mt-3 mb-3"
+                            size="128">
+                            <img
+                                :src=girl.photo
+                            >
+                        </v-avatar>
+                    </a>
                 </td>
                 <td>{{ girl.first_name }}</td>
                 <td>{{ girl.last_name }}</td>
