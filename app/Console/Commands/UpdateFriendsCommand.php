@@ -48,20 +48,27 @@ class UpdateFriendsCommand extends Command
     {
         $this->application->worked = 1;
         $this->application->save();
+        $count = $this->girls->count();
 
         $vk = new VKApiClient();
+        echo 'Найдено '.$count.PHP_EOL;
+        $i = 1;
         foreach ($this->girls as $girl) {
+            echo 'Обработка '.$i.'/'.$count.PHP_EOL;
             $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
             $girl_id = str_replace($removeChar, "", $girl->url);
 
             try {
+                $first_action = microtime(true);
                 $getListFriends = $vk->friends()->get($this->application->access_token, array(
                     'user_id' => $girl_id,
                     'order' => 'name',
                     'fields' => 'city,sex,bdate,last_seen,photo_200_orig',
                 ));
-                dd($getListFriends);
                 foreach ($getListFriends as $friend) {
+                    if (!isset($friend['city'])) {
+                        continue;
+                    }
                     if ($friend['sex'] == 1 and $friend['city']['id'] == 650) {
                         $new_friend = Friend::firstOrCreate(
                             ['url' => 'https://vk.com/id' . $friend['id']],
@@ -78,7 +85,7 @@ class UpdateFriendsCommand extends Command
                         if (isset($friend['photo_200_orig'])) {
                             try {
                                 Storage::disk('public')->put('friends/'.$new_friend->id.'_photo.jpg', file_get_contents($friend['photo_200_orig']));
-                                $new_friend->photo = 'storage/friends'.$new_friend->id.'_photo.jpg';
+                                $new_friend->photo = 'storage/friends/'.$new_friend->id.'_photo.jpg';
                                 $new_friend->save();
                             } catch (\Exception $e) {
                                 continue;
@@ -86,11 +93,16 @@ class UpdateFriendsCommand extends Command
                         }
                     }
                 }
+                $last_action = microtime(true);
+                $time_difference = $last_action - $first_action;
+                if ($time_difference >= 0.22) {
+                    continue;
+                }
+                usleep(220000 - $time_difference);
             } catch (\Exception $exception) {
                 continue;
             }
         }
-
         $this->application->worked = 0;
         $this->application->save();
     }
