@@ -36,7 +36,7 @@ class UpdateFriendsCommand extends Command
     {
         parent::__construct();
         $this->application = Application::where('worked', 0)->first();
-        $this->girls = Girl::all();
+        $this->girls = Girl::take(3)->get();
     }
 
     /**
