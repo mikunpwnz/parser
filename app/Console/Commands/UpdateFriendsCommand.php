@@ -36,7 +36,7 @@ class UpdateFriendsCommand extends Command
     {
         parent::__construct();
         $this->application = Application::where('worked', 0)->first();
-        $this->girls = Girl::take(3)->get();
+        $this->girls = Girl::all();
     }
 
     /**
@@ -55,6 +55,7 @@ class UpdateFriendsCommand extends Command
         $i = 1;
         foreach ($this->girls as $girl) {
             echo 'Обработка '.$i.'/'.$count.PHP_EOL;
+            ++$i;
             $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
             $girl_id = str_replace($removeChar, "", $girl->url);
 
