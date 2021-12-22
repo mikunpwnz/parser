@@ -139,6 +139,7 @@ export default {
                 .then(({data}) => {
                     friend.wrote = 0;
                     friend.need_to_write = 1;
+                    this.getFriends(this.page)
                 })
                 .catch(() => {
                 });
@@ -152,6 +153,7 @@ export default {
                 .then(({data}) => {
                     friend.wrote = 1;
                     friend.need_to_write = 0;
+                    this.getFriends(this.page)
                 })
                 .catch(() => {
                 });

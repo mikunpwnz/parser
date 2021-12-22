@@ -15,7 +15,9 @@ class FriendController extends Controller
      */
     public function index()
     {
-        $friends = Friend::orderBy('last_seen', 'DESC')->paginate(30);
+        $friends = Friend::where('need_to_write', 0)
+            ->where('wrote', 0)
+            ->orderBy('last_seen', 'DESC')->paginate(30);
         $this->setDateFromTimestamp($friends);
         return response()->json($friends);
     }
