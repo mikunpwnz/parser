@@ -67,11 +67,11 @@ class UpdateFriendsCommand extends Command
                     'fields' => 'city,sex,bdate,last_seen,photo_200_orig',
                 ));
                 foreach ($getListFriends as $friend) {
-                    echo 'ДРУЖБАН';
                     if (!isset($friend['city'])) {
                         continue;
                     }
                     if ($friend['sex'] == 1 and $friend['city']['id'] == 650) {
+
                         $new_friend = Friend::firstOrCreate(
                             ['url' => 'https://vk.com/id' . $friend['id']],
                             [
@@ -84,6 +84,7 @@ class UpdateFriendsCommand extends Command
                                 'instagram' => '---',
                             ]
                         );
+                        dump($new_friend);
                         if (isset($friend['photo_200_orig'])) {
                             try {
                                 Storage::disk('public')->put('friends/'.$new_friend->id.'_photo.jpg', file_get_contents($friend['photo_200_orig']));
