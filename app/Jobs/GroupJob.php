@@ -272,15 +272,6 @@ class GroupJob implements ShouldQueue
                         'instagram' => $girl['instagram'],
                     ]
                 );
-                if (isset($girl['photo'])) {
-                    try {
-                        Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
-                        $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
-                        $new_girl->save();
-                    } catch (\Exception $e) {
-                        continue;
-                    }
-                }
 
                 $post = Post::firstOrCreate(
                     ['url' => $girl['post']]
@@ -290,6 +281,16 @@ class GroupJob implements ShouldQueue
                 $new_girl->posts()->syncWithoutDetaching($post);
 
                 $count++;
+
+                if (isset($girl['photo'])) {
+                    try {
+                        Storage::disk('public')->put($new_girl->id.'_photo.jpg', file_get_contents($girl['photo']));
+                        $new_girl->photo = 'storage/'.$new_girl->id.'_photo.jpg';
+                        $new_girl->save();
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
             }
         }
         $this->progress = 100;
