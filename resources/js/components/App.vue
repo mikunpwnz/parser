@@ -100,6 +100,37 @@
                     </router-link>
                 </v-list-group>
 
+                <v-list-group>
+                    <template v-slot:activator>
+                        <v-list-item-action>
+                            <v-icon>mdi-account-plus</v-icon>
+                        </v-list-item-action>
+                        <v-list-item-content>
+                            <v-list-item-title>Друзья</v-list-item-title>
+                        </v-list-item-content>
+                    </template>
+                    <router-link to="/friends">
+                        <v-list-item
+                            link>
+                            <v-list-item-action>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>Список друзей</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </router-link>
+                    <router-link to="/friendsnorm">
+                        <v-list-item
+                            link>
+                            <v-list-item-action>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>Список норм друзей</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </router-link>
+                </v-list-group>
+
             </v-list>
         </v-navigation-drawer>
         <v-app-bar
