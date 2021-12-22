@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Application;
+use App\Models\Friend;
 use App\Models\Girl;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -71,6 +72,57 @@ class UpdateOnlineJob implements ShouldQueue
                             Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
                             $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
                             $girl_new->url_photo = $user['photo_200'];
+                        } catch (\Exception $e) {
+                            continue;
+                        }
+                    }
+//                    $girl_new->url_photo = $user['photo_200'];
+                    if(isset($user['instagram'])) {
+                        $girl_new->instagram = 'https://instagram.com/'.$user['instagram'];
+                    }
+                    else
+                    {
+                        $girl_new->instagram = '---';
+                    }
+                    $girl_new->save();
+                }
+                ++$counter;
+            }
+            $offset += 1000;
+        }
+
+
+        $girls = Friend::all();
+        $girls_count = Friend::all()->count();
+        $count = ceil($girls_count/1000);
+
+        $vk = new VKApiClient();
+
+        $offset = 0;
+        $counter = 0;
+
+        for ($i = 0; $i < $count; ++$i) {
+            $girl_list = $girls->slice($offset, 1000);
+            $profilesId = [];
+            foreach($girl_list as $girl) {
+                $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
+                $girl_id = str_replace($removeChar, "", $girl->url);
+                $profilesId[] = $girl_id;
+            }
+
+            $getInfoUser = $vk->users()->get($access_token, array(
+                'user_ids' => $profilesId,
+                'fields' => 'photo_200,last_seen, connections'
+            ));
+            foreach ($getInfoUser as $user) {
+                if (isset($user['last_seen']['time'])) {
+                    $girl_new = Friend::where('url', 'like', '%'.$user['id'])->first();
+                    $girl_new->last_seen = $user['last_seen']['time'];
+                    if ($girl_new->url_photo !== $user['photo_200']) {
+                        try {
+                            Storage::disk('public')->put('friends/'.$girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
+                            $girl_new->photo = 'storage/friends/'.$girl_new->id.'_photo.jpg';
+                            $girl_new->save();
                         } catch (\Exception $e) {
                             continue;
                         }
