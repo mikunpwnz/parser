@@ -102,6 +102,7 @@ class UpdateOnlineJob implements ShouldQueue
         $counter = 0;
 
         for ($i = 0; $i < $count; ++$i) {
+            echo 'ЦИКЛ '.$i; ##########################################
             $girl_list = $girls->slice($offset, 1000);
             $profilesId = [];
             foreach($girl_list as $girl) {
@@ -114,8 +115,9 @@ class UpdateOnlineJob implements ShouldQueue
                 'user_ids' => $profilesId,
                 'fields' => 'photo_200,last_seen, connections'
             ));
-            foreach ($getInfoUser as $user) {
+            foreach ($getInfoUser as $key=>$user) {
                 if (isset($user['last_seen']['time'])) {
+                    echo 'ЗАПУСК '.$key;
                     $girl_new = Friend::where('url', 'like', '%'.$user['id'])->first();
                     $girl_new->last_seen = $user['last_seen']['time'];
                     if ($girl_new->url_photo !== $user['photo_200']) {
@@ -136,6 +138,7 @@ class UpdateOnlineJob implements ShouldQueue
                         $girl_new->instagram = '---';
                     }
                     $girl_new->save();
+                    echo 'СОХРАНЕНИЕ'.$key;
                 }
                 ++$counter;
             }
