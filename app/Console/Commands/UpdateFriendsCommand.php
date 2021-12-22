@@ -84,7 +84,6 @@ class UpdateFriendsCommand extends Command
                                 'instagram' => '---',
                             ]
                         );
-                        dump($new_friend);
                         if (isset($friend['photo_200_orig'])) {
                             try {
                                 Storage::disk('public')->put('friends/'.$new_friend->id.'_photo.jpg', file_get_contents($friend['photo_200_orig']));
