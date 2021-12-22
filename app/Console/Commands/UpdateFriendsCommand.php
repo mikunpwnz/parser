@@ -36,7 +36,7 @@ class UpdateFriendsCommand extends Command
     {
         parent::__construct();
         $this->application = Application::where('worked', 0)->first();
-        $this->girls = Girl::first();
+        $this->girls = Girl::all();
     }
 
     /**
@@ -50,9 +50,7 @@ class UpdateFriendsCommand extends Command
         $this->application->save();
 
         $vk = new VKApiClient();
-        dump($this->girls);
         foreach ($this->girls as $girl) {
-            dd($girl);
             $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
             $girl_id = str_replace($removeChar, "", $girl->url);
 
