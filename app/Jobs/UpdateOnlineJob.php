@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Exception;
 use VK\Client\VKApiClient;
 
 class UpdateOnlineJob implements ShouldQueue
@@ -41,60 +42,60 @@ class UpdateOnlineJob implements ShouldQueue
         $application->worked = 1;
         $application->save();
 
-        $girls = Girl::all();
-        $girls_count = Girl::all()->count();
-        $count = ceil($girls_count/1000);
+//        $girls = Girl::all();
+//        $girls_count = Girl::all()->count();
+//        $count = ceil($girls_count/1000);
+//
+//        $vk = new VKApiClient();
+//
+//        $offset = 0;
+//        $counter = 0;
+//
+//        for ($i = 0; $i < $count; ++$i) {
+//            $girl_list = $girls->slice($offset, 1000);
+//            $profilesId = [];
+//            foreach($girl_list as $girl) {
+//                $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
+//                $girl_id = str_replace($removeChar, "", $girl->url);
+//                $profilesId[] = $girl_id;
+//            }
+//
+//            $getInfoUser = $vk->users()->get($access_token, array(
+//                'user_ids' => $profilesId,
+//                'fields' => 'photo_200,last_seen, connections'
+//            ));
+//            foreach ($getInfoUser as $user) {
+//                if (isset($user['last_seen']['time'])) {
+//                    $girl_new = Girl::where('url', 'like', '%'.$user['id'])->first();
+//                    $girl_new->last_seen = $user['last_seen']['time'];
+//                    if ($girl_new->url_photo !== $user['photo_200']) {
+//                        try {
+//                            Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
+//                            $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
+//                            $girl_new->url_photo = $user['photo_200'];
+//                        } catch (\Exception $e) {
+//                            continue;
+//                        }
+//                    }
+////                    $girl_new->url_photo = $user['photo_200'];
+//                    if(isset($user['instagram'])) {
+//                        $girl_new->instagram = 'https://instagram.com/'.$user['instagram'];
+//                    }
+//                    else
+//                    {
+//                        $girl_new->instagram = '---';
+//                    }
+//                    $girl_new->save();
+//                }
+//                ++$counter;
+//            }
+//            $offset += 1000;
+//        }
 
         $vk = new VKApiClient();
 
-        $offset = 0;
-        $counter = 0;
-
-        for ($i = 0; $i < $count; ++$i) {
-            $girl_list = $girls->slice($offset, 1000);
-            $profilesId = [];
-            foreach($girl_list as $girl) {
-                $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
-                $girl_id = str_replace($removeChar, "", $girl->url);
-                $profilesId[] = $girl_id;
-            }
-
-            $getInfoUser = $vk->users()->get($access_token, array(
-                'user_ids' => $profilesId,
-                'fields' => 'photo_200,last_seen, connections'
-            ));
-            foreach ($getInfoUser as $user) {
-                if (isset($user['last_seen']['time'])) {
-                    $girl_new = Girl::where('url', 'like', '%'.$user['id'])->first();
-                    $girl_new->last_seen = $user['last_seen']['time'];
-                    if ($girl_new->url_photo !== $user['photo_200']) {
-                        try {
-                            Storage::disk('public')->put($girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
-                            $girl_new->photo = 'storage/'.$girl_new->id.'_photo.jpg';
-                            $girl_new->url_photo = $user['photo_200'];
-                        } catch (\Exception $e) {
-                            continue;
-                        }
-                    }
-//                    $girl_new->url_photo = $user['photo_200'];
-                    if(isset($user['instagram'])) {
-                        $girl_new->instagram = 'https://instagram.com/'.$user['instagram'];
-                    }
-                    else
-                    {
-                        $girl_new->instagram = '---';
-                    }
-                    $girl_new->save();
-                }
-                ++$counter;
-            }
-            $offset += 1000;
-        }
-
-        $vk = new VKApiClient();
-
-        $offset = 0;
-        $counter = 0;
+//        $offset = 0;
+//        $counter = 0;
 
         Friend::chunk(1000, function($friends) use ($access_token, $vk) {
             $profilesId = [];
@@ -110,18 +111,30 @@ class UpdateOnlineJob implements ShouldQueue
             foreach ($getInfoUser as $user) {
                 if (isset($user['last_seen']['time'])) {
                     $query[]= [
-                        'vk_id'     => $user['id'],
-                        'last_seen' => $user['last_seen']['time'],
-                        'url_photo' => $user['photo_200']
+                        'id'         => 'ky',
+                        'url'        => 'ky',
+                        'first_name' => 'ky',
+                        'last_name'  => 'ky',
+                        'bdate'      => 'ky',
+                        'photo'      => 'ky',
+                        'vk_id'      => $user['id'],
+                        'last_seen'  => $user['last_seen']['time'],
+                        'url_photo'  => $user['photo_200'],
+                        'instagram'  => (isset($user['instagram'])) ? 'https://instagram.com/' . $user['instagram'] : '---',
                     ];
+                    try {
+                        Storage::disk('public')->put($user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
+                    } catch (Exception $exception) {
+                        continue;
+                    }
                 }
             }
-            User::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
+            Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo', 'instagram']);
         });
 
-        $girls = Girl::all();
-        $girls_count = Girl::all()->count();
-        $count = ceil($girls_count/1000);
+//        $girls = Girl::all();
+//        $girls_count = Girl::all()->count();
+//        $count = ceil($girls_count/1000);
 
 //
 //
@@ -134,49 +147,49 @@ class UpdateOnlineJob implements ShouldQueue
 //        $offset = 0;
 //        $counter = 0;
 //
-        for ($i = 0; $i < $count; ++$i) {
-            echo 'ЦИКЛ '.$i; ##########################################
-            $girl_list = $girls->slice($offset, 1000);
-            $profilesId = [];
-            foreach($girl_list as $girl) {
-                $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
-                $girl_id = str_replace($removeChar, "", $girl->url);
-                $profilesId[] = $girl_id;
-            }
-
-            $getInfoUser = $vk->users()->get($access_token, array(
-                'user_ids' => $profilesId,
-                'fields' => 'photo_200,last_seen, connections'
-            ));
-            foreach ($getInfoUser as $key=>$user) {
-                if (isset($user['last_seen']['time'])) {
-                    echo 'ЗАПУСК '.$key;
-                    $girl_new = Friend::where('url', 'like', '%'.$user['id'])->first();
-                    $girl_new->last_seen = $user['last_seen']['time'];
-                    if ($girl_new->url_photo !== $user['photo_200']) {
-                        try {
-                            Storage::disk('public')->put('friends/'.$girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
-                            $girl_new->photo = 'storage/friends/'.$girl_new->id.'_photo.jpg';
-                            $girl_new->save();
-                        } catch (\Exception $e) {
-                            continue;
-                        }
-                    }
-//                    $girl_new->url_photo = $user['photo_200'];
-                    if(isset($user['instagram'])) {
-                        $girl_new->instagram = 'https://instagram.com/'.$user['instagram'];
-                    }
-                    else
-                    {
-                        $girl_new->instagram = '---';
-                    }
-                    $girl_new->save();
-                    echo 'СОХРАНЕНИЕ'.$key;
-                }
-                ++$counter;
-            }
-            $offset += 1000;
-        }
+//        for ($i = 0; $i < $count; ++$i) {
+//            echo 'ЦИКЛ '.$i; ##########################################
+//            $girl_list = $girls->slice($offset, 1000);
+//            $profilesId = [];
+//            foreach($girl_list as $girl) {
+//                $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
+//                $girl_id = str_replace($removeChar, "", $girl->url);
+//                $profilesId[] = $girl_id;
+//            }
+//
+//            $getInfoUser = $vk->users()->get($access_token, array(
+//                'user_ids' => $profilesId,
+//                'fields' => 'photo_200,last_seen, connections'
+//            ));
+//            foreach ($getInfoUser as $key=>$user) {
+//                if (isset($user['last_seen']['time'])) {
+//                    echo 'ЗАПУСК '.$key;
+//                    $girl_new = Friend::where('url', 'like', '%'.$user['id'])->first();
+//                    $girl_new->last_seen = $user['last_seen']['time'];
+//                    if ($girl_new->url_photo !== $user['photo_200']) {
+//                        try {
+//                            Storage::disk('public')->put('friends/'.$girl_new->id.'_photo.jpg', file_get_contents($user['photo_200']));
+//                            $girl_new->photo = 'storage/friends/'.$girl_new->id.'_photo.jpg';
+//                            $girl_new->save();
+//                        } catch (\Exception $e) {
+//                            continue;
+//                        }
+//                    }
+////                    $girl_new->url_photo = $user['photo_200'];
+//                    if(isset($user['instagram'])) {
+//                        $girl_new->instagram = 'https://instagram.com/'.$user['instagram'];
+//                    }
+//                    else
+//                    {
+//                        $girl_new->instagram = '---';
+//                    }
+//                    $girl_new->save();
+//                    echo 'СОХРАНЕНИЕ'.$key;
+//                }
+//                ++$counter;
+//            }
+//            $offset += 1000;
+//        }
 
         $application->worked = 0;
         $application->save();
