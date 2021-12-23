@@ -56,7 +56,7 @@ class RenamePhotoCommand extends Command
                     'photo'      => 'storage/friends/'.$vk_id.'_photo.jpg'
                 ];
                 try {
-                    Storage::move('public/friends/'.$girl->id.'_photo.jpg', 'public/friends/'.$vk_id.'_photo.jpg');
+//                    Storage::move('public/friends/'.$girl->id.'_photo.jpg', 'public/friends/'.$vk_id.'_photo.jpg');
 //                    Storage::move('public/'.$vk_id.'_photo.jpg', 'public/'.$girl->id.'_photo.jpg');
                 } catch (\Exception $exception) {
                     continue;
