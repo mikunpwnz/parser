@@ -111,7 +111,6 @@ class UpdateOnlineJob implements ShouldQueue
             foreach ($getInfoUser as $user) {
                 if (isset($user['last_seen']['time'])) {
                     $query[]= [
-                        'id'         => 1,
                         'url'        => 'ky',
                         'first_name' => 'ky',
                         'last_name'  => 'ky',
@@ -122,11 +121,11 @@ class UpdateOnlineJob implements ShouldQueue
                         'url_photo'  => $user['photo_200'],
                         'instagram'  => (isset($user['instagram'])) ? 'https://instagram.com/' . $user['instagram'] : '---',
                     ];
-                    try {
+//                    try {
 //                        Storage::disk('public')->put($user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
-                    } catch (Exception $exception) {
-                        continue;
-                    }
+//                    } catch (Exception $exception) {
+//                        continue;
+//                    }
                 }
             }
             Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo', 'instagram']);
