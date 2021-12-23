@@ -98,7 +98,10 @@ class UpdateOnlineJob implements ShouldQueue
 //        $counter = 0;
 
         Friend::chunkById(10, function($friends) use ($access_token, $vk) {
-            dd($friends);
+            $test = $friends->filter(function($friend) {
+                return $friend->id == 2;
+            })->first();
+            dd($test);
             $profilesId = [];
             foreach ($friends as $friend) {
                 $profilesId[] = $friend->vk_id;
