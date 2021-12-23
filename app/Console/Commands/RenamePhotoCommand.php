@@ -40,25 +40,27 @@ class RenamePhotoCommand extends Command
     public function handle()
     {
 
-        Girl::chunk(1, function ($girls) {
+        Girl::chunkById(1000, function ($girls) {
             $query = [];
-            $user= Girl::first();
             foreach ($girls as $girl) {
                 $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
                 $vk_id = str_replace($removeChar, "", $girl->url);
                 $query[]=[
-                    'id' => $user->id,
-                    'vk_id' => $vk_id,
-                    'photo' => 'storage/'.$vk_id.'_photo.jpg'
+                    'id'         => $girl->id,
+                    'url'        => $girl->url,
+                    'first_name' => $girl->first_name,
+                    'last_name'  => $girl->last_name,
+                    'bdate'      => $girl->bdate,
+                    'vk_id'      => $vk_id,
+                    'photo'      => 'storage/'.$vk_id.'_photo.jpg'
                 ];
-//                try {
-//                    Storage::move('public/'.$girl->id.'_photo.jpg', 'public/'.$vk_id.'_photo.jpg');
+                try {
+                    Storage::move('public/'.$girl->id.'_photo.jpg', 'public/'.$vk_id.'_photo.jpg');
 //                    Storage::move('public/'.$vk_id.'_photo.jpg', 'public/'.$girl->id.'_photo.jpg');
-//                } catch (\Exception $exception) {
-//                    continue;
-//                }
+                } catch (\Exception $exception) {
+                    continue;
+                }
             }
-            dd($query);
             Girl::upsert($query, ['id'], ['vk_id', 'photo']);
             $this->info('ОП МИЗАНТРОП');
         });
