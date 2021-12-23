@@ -111,11 +111,11 @@ class UpdateOnlineJob implements ShouldQueue
             foreach ($getInfoUser as $user) {
                 if (isset($user['last_seen']['time'])) {
                     $query[]= [
-                        'url'        => 'ky',
-                        'first_name' => 'ky',
-                        'last_name'  => 'ky',
-                        'bdate'      => 'ky',
-                        'photo'      => 'ky',
+                        'url'        => 'https://vk.com/id'.$user['id'],
+                        'first_name' => $user['first_name'],
+                        'last_name'  => $user['last_name'],
+                        'bdate'      => (isset($user['bdate'])) ? $user['bdate'] : '---',
+                        'photo'      => 'storage/friends/'.$user['id'].'_photo.jpg',
                         'vk_id'      => $user['id'],
                         'last_seen'  => $user['last_seen']['time'],
                         'url_photo'  => $user['photo_200'],
