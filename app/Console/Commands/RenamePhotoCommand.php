@@ -51,7 +51,6 @@ class RenamePhotoCommand extends Command
                     'photo' => 'storage/'.$vk_id.'_photo.jpg'
                 ];
                 Storage::move('public/'.$girl->id.'_photo.jpg', 'public/'.$vk_id.'_photo.jpg');
-                dd();
             }
             Girl::upsert($query, ['id'], ['vk_id', 'photo']);
             $this->info('ОП МИЗАНТРОП');
