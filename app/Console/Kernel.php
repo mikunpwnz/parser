@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Console\Commands\FixFriendListCommand;
+use App\Console\Commands\RenamePhotoCommand;
 use App\Console\Commands\UpdateFriendsCommand;
 use App\Console\Commands\UpdateGroupsCommand;
 use Illuminate\Console\Scheduling\Schedule;
@@ -17,6 +19,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         UpdateGroupsCommand::class,
         UpdateFriendsCommand::class,
+        FixFriendListCommand::class,
+        RenamePhotoCommand::class,
     ];
 
     /**
