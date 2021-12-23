@@ -49,7 +49,7 @@ class RenamePhotoCommand extends Command
                     'vk_id' => $vk_id,
                     'photo' => 'storage/'.$vk_id.'_photo.jpg'
                 ];
-                Storage::move('//var/www/parser/storage/app/'.$girl->id.'_photo.jpg', '//var/www/parser/storage/app/'.$vk_id.'_photo.jpg');
+                Storage::move('/var/www/parser/storage/app/public'.$girl->id.'_photo.jpg', '//var/www/parser/storage/app/public'.$vk_id.'_photo.jpg');
                 dd();
             }
             Girl::upsert($query, ['id'], ['vk_id', 'photo']);
