@@ -39,6 +39,8 @@ class RenamePhotoCommand extends Command
      */
     public function handle()
     {
+        $path =  Storage::path('1_photo.jpg');
+        dd($path);
         Girl::chunk(1000, function ($girls) {
             $query = [];
             foreach ($girls as $girl) {
