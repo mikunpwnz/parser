@@ -40,7 +40,7 @@ class RenamePhotoCommand extends Command
     public function handle()
     {
 
-        Girl::chunk(1000, function ($girls) {
+        Girl::chunk(1, function ($girls) {
             $query = [];
             foreach ($girls as $girl) {
                 $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
