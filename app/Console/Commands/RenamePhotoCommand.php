@@ -39,9 +39,11 @@ class RenamePhotoCommand extends Command
      */
     public function handle()
     {
+
         Girl::chunk(1000, function ($girls) {
             $query = [];
             foreach ($girls as $girl) {
+                dd(Storage::get($girl->photo));
                 $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
                 $vk_id = str_replace($removeChar, "", $girl->url);
                 $query[]=[
