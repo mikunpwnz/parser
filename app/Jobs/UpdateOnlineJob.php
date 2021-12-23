@@ -97,11 +97,12 @@ class UpdateOnlineJob implements ShouldQueue
 //        $offset = 0;
 //        $counter = 0;
 
-        Friend::chunkById(1000, function($friends) use ($access_token, $vk) {
+        Friend::chunkById(4, function($friends) use ($access_token, $vk) {
             $profilesId = [];
             foreach ($friends as $friend) {
                 $profilesId[] = $friend->vk_id;
             }
+            dump($profilesId);
             $getInfoUser = $vk->users()->get($access_token, array(
                 'user_ids' => $profilesId,
                 'fields' => 'photo_200,last_seen, connections'
@@ -128,7 +129,9 @@ class UpdateOnlineJob implements ShouldQueue
 //                    }
                 }
             }
-            Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
+            dump($query);
+            dd();
+//            Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
         });
 
 //        $girls = Girl::all();
