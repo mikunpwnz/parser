@@ -40,7 +40,7 @@ class RenamePhotoCommand extends Command
     public function handle()
     {
 
-        Girl::chunk(1, function ($girls) {
+        Girl::chunk(1000, function ($girls) {
             $query = [];
             $user= Girl::first();
             foreach ($girls as $girl) {
