@@ -53,7 +53,7 @@ class RenamePhotoCommand extends Command
                     'last_name'  => $girl->last_name,
                     'bdate'      => $girl->bdate,
                     'vk_id'      => $vk_id,
-                    'photo'      => 'storage/'.$vk_id.'_photo.jpg'
+                    'photo'      => 'storage/friends/'.$vk_id.'_photo.jpg'
                 ];
                 try {
                     Storage::move('public/friends/'.$girl->id.'_photo.jpg', 'public/friends/'.$vk_id.'_photo.jpg');
