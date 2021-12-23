@@ -43,7 +43,7 @@ class RenamePhotoCommand extends Command
         Girl::chunk(1000, function ($girls) {
             $query = [];
             foreach ($girls as $girl) {
-                dd(Storage::get($girl->photo));
+                dd(Storage::get('storage/1_photo.jpg'));
                 $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
                 $vk_id = str_replace($removeChar, "", $girl->url);
                 $query[]=[
