@@ -122,11 +122,11 @@ class UpdateOnlineJob implements ShouldQueue
                         'url_photo'  => $user['photo_200'],
                         'instagram'  => (isset($user['instagram'])) ? 'https://instagram.com/' . $user['instagram'] : '---',
                     ];
-//                    try {
-//                        Storage::disk('public')->put($user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
-//                    } catch (Exception $exception) {
-//                        continue;
-//                    }
+                    try {
+                        Storage::disk('public')->put('friends/'.$user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
+                    } catch (Exception $exception) {
+                        continue;
+                    }
                 }
             }
             Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
