@@ -39,7 +39,6 @@ class RenamePhotoCommand extends Command
      */
     public function handle()
     {
-        dd(storage_path('public/' . '1_photo.jpg'));
         Girl::chunk(1000, function ($girls) {
             $query = [];
             foreach ($girls as $girl) {
@@ -50,7 +49,8 @@ class RenamePhotoCommand extends Command
                     'vk_id' => $vk_id,
                     'photo' => 'storage/'.$vk_id.'_photo.jpg'
                 ];
-                Storage::move($girl->photo, 'storage/'.$vk_id.'_photo.jpg');
+                Storage::move('storage/public/'.$girl->id.'_photo.jpg', 'storage/public/'.$vk_id.'_photo.jpg');
+                dd();
             }
             Girl::upsert($query, ['id'], ['vk_id', 'photo']);
             $this->info('ОП МИЗАНТРОП');
