@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         UpdateGroupsCommand::class,
         UpdateFriendsCommand::class,
-        FixFriendListCommand::class,
+//        FixFriendListCommand::class,
         RenamePhotoCommand::class,
     ];
 
