@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Friend;
 use App\Models\Girl;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -40,7 +41,7 @@ class RenamePhotoCommand extends Command
     public function handle()
     {
 
-        Girl::chunkById(1000, function ($girls) {
+        Friend::chunkById(1000, function ($girls) {
             $query = [];
             foreach ($girls as $girl) {
                 $removeChar = ["https://", "http://", "/", 'vk.com', 'id'];
@@ -55,13 +56,13 @@ class RenamePhotoCommand extends Command
                     'photo'      => 'storage/'.$vk_id.'_photo.jpg'
                 ];
                 try {
-                    Storage::move('public/'.$girl->id.'_photo.jpg', 'public/'.$vk_id.'_photo.jpg');
+                    Storage::move('public/friends/'.$girl->id.'_photo.jpg', 'public/friends/'.$vk_id.'_photo.jpg');
 //                    Storage::move('public/'.$vk_id.'_photo.jpg', 'public/'.$girl->id.'_photo.jpg');
                 } catch (\Exception $exception) {
                     continue;
                 }
             }
-            Girl::upsert($query, ['id'], ['vk_id', 'photo']);
+            Friend::upsert($query, ['id'], ['vk_id', 'photo']);
             $this->info('ОП МИЗАНТРОП');
         });
     }
