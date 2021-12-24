@@ -97,18 +97,18 @@ class UpdateOnlineJob implements ShouldQueue
 //        $offset = 0;
 //        $counter = 0;
 
-        Friend::chunkById(10, function($friends) use ($access_token, $vk) {
+        Friend::chunkById(1000, function($friends) use ($access_token, $vk) {
             $profilesId = [];
             foreach ($friends as $friend) {
                 $profilesId[] = $friend->vk_id;
             }
-            dump($profilesId);
             $getInfoUser = $vk->users()->get($access_token, array(
                 'user_ids' => $profilesId,
                 'fields' => 'photo_200,last_seen, connections'
             ));
-            dd($getInfoUser);
+
             $query = [];
+            $i = 0;
             foreach ($getInfoUser as $user) {
                 if (isset($user['last_seen']['time'])) {
                     $query[]= [
@@ -122,11 +122,15 @@ class UpdateOnlineJob implements ShouldQueue
                         'url_photo'  => $user['photo_200'],
                         'instagram'  => (isset($user['instagram'])) ? 'https://instagram.com/' . $user['instagram'] : '---',
                     ];
-                    try {
-                        Storage::disk('public')->put('friends/'.$user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
-                    } catch (Exception $exception) {
-                        continue;
+                    if ($friends[$i]->url_photo !== $user['photo_200']) {
+                        try {
+                            Storage::disk('public')->put('friends/'.$user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
+                        } catch (Exception $exception) {
+                            ++$i;
+                            continue;
+                        }
                     }
+                    ++$i;
                 }
             }
             Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
