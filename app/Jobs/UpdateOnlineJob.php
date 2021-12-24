@@ -134,6 +134,7 @@ class UpdateOnlineJob implements ShouldQueue
                 }
             }
             Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
+            echo 'CHUNK';
         });
 
 //        $girls = Girl::all();
