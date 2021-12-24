@@ -98,10 +98,6 @@ class UpdateOnlineJob implements ShouldQueue
 //        $counter = 0;
 
         Friend::chunkById(10, function($friends) use ($access_token, $vk) {
-            $test = $friends->filter(function($friend) {
-                return $friend->vk_id == 137629131;
-            })->first();
-            dd($test);
             $profilesId = [];
             foreach ($friends as $friend) {
                 $profilesId[] = $friend->vk_id;
@@ -111,7 +107,7 @@ class UpdateOnlineJob implements ShouldQueue
                 'user_ids' => $profilesId,
                 'fields' => 'photo_200,last_seen, connections'
             ));
-
+            dd($getInfoUser);
             $query = [];
             foreach ($getInfoUser as $user) {
                 if (isset($user['last_seen']['time'])) {
