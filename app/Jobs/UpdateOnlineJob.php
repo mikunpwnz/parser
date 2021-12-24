@@ -93,10 +93,6 @@ class UpdateOnlineJob implements ShouldQueue
 //        }
 
         $vk = new VKApiClient();
-
-//        $offset = 0;
-//        $counter = 0;
-
         Friend::chunkById(1000, function($friends) use ($access_token, $vk) {
             $profilesId = [];
             foreach ($friends as $friend) {
@@ -135,6 +131,47 @@ class UpdateOnlineJob implements ShouldQueue
                 ++$i;
             }
             Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
+            echo 'CHUNK';
+        });
+
+        Girl::chunkById(1000, function($girls) use ($access_token, $vk) {
+            $profilesId = [];
+            foreach ($girls as $girl) {
+                $profilesId[] = $girl->vk_id;
+            }
+            $getInfoUser = $vk->users()->get($access_token, array(
+                'user_ids' => $profilesId,
+                'fields' => 'photo_200,last_seen, connections'
+            ));
+
+            $query = [];
+            $i = 0;
+            foreach ($getInfoUser as $user) {
+                if (isset($user['last_seen']['time'])) {
+                    $query[]= [
+                        'url'        => 'https://vk.com/id'.$user['id'],
+                        'first_name' => $user['first_name'],
+                        'last_name'  => $user['last_name'],
+                        'bdate'      => (isset($user['bdate'])) ? $user['bdate'] : '---',
+                        'photo'      => 'storage/'.$user['id'].'_photo.jpg',
+                        'vk_id'      => $user['id'],
+                        'last_seen'  => $user['last_seen']['time'],
+                        'url_photo'  => $user['photo_200'],
+                        'instagram'  => (isset($user['instagram'])) ? 'https://instagram.com/' . $user['instagram'] : '---',
+                    ];
+                    if ($girls[$i]->url_photo !== $user['photo_200']) {
+                        echo 'PROVERKA';
+                        try {
+                            Storage::disk('public')->put($user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
+                        } catch (Exception $exception) {
+                            ++$i;
+                            continue;
+                        }
+                    }
+                }
+                ++$i;
+            }
+            Girl::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
             echo 'CHUNK';
         });
 
