@@ -123,6 +123,7 @@ class UpdateOnlineJob implements ShouldQueue
                         'instagram'  => (isset($user['instagram'])) ? 'https://instagram.com/' . $user['instagram'] : '---',
                     ];
                     if ($friends[$i]->url_photo !== $user['photo_200']) {
+                        echo 'PROVERKA';
                         try {
                             Storage::disk('public')->put('friends/'.$user['id'].'_photo.jpg', file_get_contents($user['photo_200']));
                         } catch (Exception $exception) {
@@ -130,8 +131,8 @@ class UpdateOnlineJob implements ShouldQueue
                             continue;
                         }
                     }
-                    ++$i;
                 }
+                ++$i;
             }
             Friend::upsert($query, ['vk_id'], ['last_seen', 'url_photo']);
             echo 'CHUNK';
