@@ -7,6 +7,7 @@ import ApplicationIndex from '../pages/applications/index'
 import NotesIndex from '../pages/notes/index'
 import FriendsIndex from '../pages/friends/index'
 import FriendIndexNorm from '../pages/friends/indexNorm'
+import websocket from '../pages/websocket/websocket-test'
 
 export default {
     mode: 'history',
@@ -55,6 +56,11 @@ export default {
             path: '/friendsnorm',
             name: 'indexfriendsnorm',
             component: FriendIndexNorm,
+        },
+        {
+            path: '/websocket',
+            name: 'websocket',
+            component: websocket,
         },
     ]
 }
