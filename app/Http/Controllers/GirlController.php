@@ -39,6 +39,16 @@ class GirlController extends Controller
         //
     }
 
+    public function description(Request $request)
+    {
+        $id = $request->input('id');
+        $description = $request->input('description');
+        $girl = Girl::find($id);
+        $girl->description = $description;
+        $girl->save();
+        return response()->json('Успешно сохранено!');
+    }
+
     /**
      * Store a newly created resource in storage.
      *

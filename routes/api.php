@@ -41,6 +41,7 @@ Route::post('/girl/dislike', [\App\Http\Controllers\GirlController::class, 'disl
 Route::post('/girl/search', [\App\Http\Controllers\GirlController::class, 'searchGirls']);
 Route::get('/girls/fix', [\App\Http\Controllers\GirlController::class, 'fix']);
 Route::post('/girls/update-online', [\App\Http\Controllers\GirlController::class, 'updateOnline']);
+Route::post('/girl/description', [\App\Http\Controllers\GirlController::class, 'description']);
 
 Route::resource('/note', \App\Http\Controllers\NoteController::class);
 Route::post('/note/socket', [\App\Http\Controllers\NoteController::class, 'socket']);

@@ -58,6 +58,11 @@
                             </v-expand-transition>
                         </v-img>
                     </v-hover>
+                    <v-text-field
+                        label="Описание"
+                        v-model="girl.first_name"
+                    >
+                    </v-text-field>
                     <v-card-actions
                         :style="styleObject(girl)"
                     >
