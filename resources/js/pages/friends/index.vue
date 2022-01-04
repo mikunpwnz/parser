@@ -112,6 +112,11 @@ export default {
     }),
     methods: {
         getFriends(page = 1) {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: "smooth"
+            })
             console.log('defolt')
             axios.get('/api/friend' + '?page=' + page)
                 .then(({data}) => {
