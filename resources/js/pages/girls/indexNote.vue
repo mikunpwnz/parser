@@ -7,6 +7,10 @@
     position: absolute;
     width: 100%;
 }
+.input-margin {
+    padding-left: 10px;
+    padding-right: 10px;
+}
 </style>
 <template>
     <v-container fluid>
@@ -58,6 +62,15 @@
                             </v-expand-transition>
                         </v-img>
                     </v-hover>
+                    <div class="input-margin">
+                        <v-text-field
+                            placeholder="Введите описание"
+                            v-model="girl.description"
+                            @change="setDescription(girl)"
+                            :success-messages="suc[girl.id]"
+                        >
+                        </v-text-field>
+                    </div>
                     <v-card-actions
                         :style="styleObject(girl)"
                     >
@@ -130,8 +143,29 @@ export default {
         length: 0,
         page: 1,
         noteId: '',
+        suc: [],
     }),
     methods: {
+        setDescription (girl) {
+            let id = girl.id
+            let description = girl.description
+            axios.post('/api/girl/description', {
+                id: id,
+                description: description
+            })
+                .then(({data}) => {
+                    console.log(data)
+                    this.suc = []
+                    console.log(this.suc[girl.id])
+                    this.suc[girl.id] = data
+                    setTimeout(this.clearLoad,2000)
+                })
+                .catch(() => {
+                });
+        },
+        clearLoad() {
+            this.suc = ''
+        },
         getGirlFromNote(id, page = 1) {
             console.log(id)
             console.log(page)

@@ -113,6 +113,16 @@ class FriendController extends Controller
         $friend->save();
     }
 
+    public function description(Request $request)
+    {
+        $id = $request->input('id');
+        $description = $request->input('description');
+        $friend = Friend::find($id);
+        $friend->description = $description;
+        $friend->save();
+        return response()->json('Успешно сохранено!');
+    }
+
     private function setDateFromTimestamp($friends)
     {
         foreach ($friends as &$friend) {

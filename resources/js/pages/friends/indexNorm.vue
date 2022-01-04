@@ -38,6 +38,15 @@
                             </v-card-text>
                         </v-img>
                     </v-hover>
+                    <div class="input-margin">
+                        <v-text-field
+                            placeholder="Введите описание"
+                            v-model="friend.description"
+                            @change="setDescription(friend)"
+                            :success-messages="suc[friend.id]"
+                        >
+                        </v-text-field>
+                    </div>
                     <v-card-actions
                         :style="styleObject(friend)"
                     >
@@ -109,8 +118,29 @@ export default {
         friends: {},
         length: 0,
         page: 1,
+        suc: [],
     }),
     methods: {
+        setDescription (friend) {
+            let id = friend.id
+            let description = friend.description
+            axios.post('/api/friend/description', {
+                id: id,
+                description: description
+            })
+                .then(({data}) => {
+                    console.log(data)
+                    this.suc = []
+                    console.log(this.suc[friend.id])
+                    this.suc[friend.id] = data
+                    setTimeout(this.clearLoad,2000)
+                })
+                .catch(() => {
+                });
+        },
+        clearLoad() {
+            this.suc = ''
+        },
         getFriends(page = 1) {
             console.log('norm')
             axios.get('/api/friendnorm' + '?page=' + page)

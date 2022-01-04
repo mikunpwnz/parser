@@ -50,3 +50,4 @@ Route::resource('friend', \App\Http\Controllers\FriendController::class);
 Route::get('/friendnorm', [\App\Http\Controllers\FriendController::class, 'indexNorm']);
 Route::post('/friend/like', [\App\Http\Controllers\FriendController::class, 'like']);
 Route::post('/friend/dislike', [\App\Http\Controllers\FriendController::class, 'dislike']);
+Route::post('/friend/description', [\App\Http\Controllers\FriendController::class, 'description']);
