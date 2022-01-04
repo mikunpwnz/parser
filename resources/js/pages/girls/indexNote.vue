@@ -167,11 +167,11 @@ export default {
             this.suc = ''
         },
         getGirlFromNote(id, page = 1) {
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: "smooth"
-            })
+            // window.scrollTo({
+            //     top: 0,
+            //     left: 0,
+            //     behavior: "smooth"
+            // })
             console.log(id)
             console.log(page)
             axios.get('/api/girl/note/' + id + '?page=' + page)

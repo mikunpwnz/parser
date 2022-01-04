@@ -142,11 +142,11 @@ export default {
             this.suc = ''
         },
         getFriends(page = 1) {
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: "smooth"
-            })
+            // window.scrollTo({
+            //     top: 0,
+            //     left: 0,
+            //     behavior: "smooth"
+            // })
             console.log('norm')
             axios.get('/api/friendnorm' + '?page=' + page)
                 .then(({data}) => {
