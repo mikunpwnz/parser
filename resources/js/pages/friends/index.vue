@@ -118,6 +118,7 @@ export default {
         friends: {},
         length: 0,
         page: 1,
+        suc: [],
     }),
     methods: {
         setDescription (friend) {

@@ -139,6 +139,7 @@ export default {
         length: 0,
         page: 1,
         groupId: '',
+        suc: [],
     }),
     methods: {
         setDescription (girl) {
